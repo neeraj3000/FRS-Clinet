@@ -84,11 +84,10 @@ const Login = () => {
           </Avatar>
           <Typography variant="h5" style={{ color: Colors.textColor }}>
             Sign In
-          </Typography>
+          </Typography> 
 
           <form onSubmit={handleLogin} style={{ width: '100%' }}>
             <TextField
-              label="Username"
               placeholder="Enter username"
               fullWidth
               required
@@ -101,7 +100,7 @@ const Login = () => {
             />
 
             <TextField
-              label="Password"
+
               placeholder="Enter password"
               type={showPassword ? "text" : "password"}
               fullWidth

@@ -1,0 +1,85 @@
+/* Header styling */
+.header {
+    display: flex;
+    justify-content: space-between; /* Space out the left, center, and right items */
+    align-items: center;
+    background-color: #0c78e4;
+    padding: 10px 20px; /* Adjusted for better spacing */
+    color: white;
+    height: 60px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Add subtle shadow to header */
+    position: relative;
+  }
+  
+  /* Logo on the left side */
+  .header-logo-left img {
+    height: 50px;
+    cursor: pointer;
+  }
+  
+  /* Centered "FRS" text */
+  .header-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.6rem; /* Slightly larger font */
+    color: white;
+    font-weight: bold;
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+  
+  /* Circular logo button on the right side */
+  .header-logo-right img {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%; /* Circular shape */
+    border: 2px solid white; /* White border for better visibility */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for emphasis */
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transitions */
+  }
+  
+  /* Hover effect on the circular logo button */
+  .header-logo-right img:hover {
+    transform: scale(1.1); /* Slightly enlarges the logo */
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.3); /* Stronger shadow on hover */
+  }
+  
+  /* Dropdown menu styling */
+  .dropdown-menu {
+    position: absolute;
+    right: 10px;
+    top: 70px; /* Increased for more space below the header */
+    background-color: #ffffff;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15); /* Softer shadow for dropdown */
+    border-radius: 8px;
+    width: 200px; /* Slightly wider for comfort */
+    z-index: 1;
+    padding: 10px 0; /* Top and bottom padding only */
+    opacity: 1; /* Ensure dropdown is visible when open */
+    pointer-events: auto; /* Allow clicks when dropdown is open */
+  }
+  
+  /* Dropdown button styling */
+  .dropdown-button {
+    background-color: #ffffff;
+    border: none;
+    padding: 12px 16px; /* Padding adjusted for better button size */
+    width: 100%;
+    text-align: left;
+    font-size: 1rem;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  .dropdown-button:hover {
+    background-color: #f0f0f0;
+    color: #0c78e4; /* Change text color on hover */
+  }
+  
+  /* Border between dropdown buttons */
+  .dropdown-button:not(:last-child) {
+    border-bottom: 1px solid #eee; /* Lighter border for subtle separation */
+  }
+  

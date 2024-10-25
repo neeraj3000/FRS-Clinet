@@ -1,7 +1,8 @@
+import Sidebar from "../components/Sidebar"
 function Admin(){
     return(
         <div>
-            <h1>Admin Page</h1>
+            <Sidebar/>
         </div>
     )
 }

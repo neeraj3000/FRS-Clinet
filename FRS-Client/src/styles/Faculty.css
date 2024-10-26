@@ -1,0 +1,83 @@
+.faculty-container {
+    padding: 20px;
+  }
+  
+  .required {
+    color: red;
+  }
+  
+  body {
+    background-color: #E3F2FD;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+  }
+  
+  .fixed-box {
+    background-color: white;
+    padding: 16px;
+    margin: 16px auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    width: 300px;
+    height: 200px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .custom-paper {
+    background-color: #13688f;
+  }
+  
+  .faculty-paper {
+    padding: 20px;
+    background-color: rgb(187, 222, 251);
+    height: 500px;
+  }
+  
+  .dropdown-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .dropdown-container .MuiFormControl-root {
+    flex: 1;
+    margin: 0 10px;
+  }
+  
+  .image-info-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+  
+  .placeholder-image {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    margin-right: 5px;
+    gap: 20px;
+  }
+  
+  .button-container button {
+    padding: 10px 20px;
+  }
+  
+  .search-student-field {
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }

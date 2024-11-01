@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   BarChart,
   Bar,
@@ -9,6 +8,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+import PropTypes from 'prop-types';
 
 // Sample data for attendance
 const data1 = [
@@ -58,6 +58,17 @@ const AttendanceChart = ({ title, data, color }) => (
     </ResponsiveContainer>
   </div>
 );
+AttendanceChart.propTypes = {
+  title: PropTypes.string.isRequired,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      attendance: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  color: PropTypes.string.isRequired,
+};
+
 
 const AttendanceCharts = () => {
   return (

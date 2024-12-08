@@ -1,33 +1,28 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-import Admin from './pages/Admin';
-import AddUser from './pages/AddUser';
-import Dashboard from './components/AttendanceChart';
-import Capture from './pages/Capture';
-import Faculty from './pages/Faculty';
+import React from "react";
+import { ThemeProvider } from "@emotion/react";
+import Admin from "./pages/admin/admin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
-/**
- * The main component of the application.
- * 
- * @returns {JSX.Element} The rendered App component.
- */
-const App=()=>{
-  return(
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/adduser" element={<AddUser/>} />
+import theme from "./utils/Theme";
+import "./styles/app.css";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-        <Route path="/dashboard" element={<Dashboard/>} />
-        <Route path="/faculty" element={<Faculty/>} />
-        <Route path="/capture" element={<Capture/>} />
-
-        
-  {/* <Route path="/student" element={<Student />} />
-  <Route path="/faculty" element={<Faculty />} /> */}
-      </Routes> 
-    </Router> 
-  )
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Admin />}>
+            {/* Nested routes */}
+            <Route path="/dashboard" element={<AdminDashboard />} />
+            {/* <Route path="manage-students" element={<ManageStudents />} />
+      <Route path="manage-faculty" element={<ManageFaculty />} /> */}
+            {/* Add other routes similarly */}
+          </Route>
+        </Routes>
+      </Router>
+    </ThemeProvider>
+  );
 }
+
 export default App;

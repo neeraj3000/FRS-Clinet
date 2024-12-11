@@ -12,7 +12,7 @@ export default function AdminDashBoard() {
     "spam",
   ];
 
-  const [open, setOpen] = useState(true);  // Keep drawer open by default
+  const [open, setOpen] = useState(false);  // Keep drawer open by default
 
   const handleDrawerOpen = () => {
     setOpen(true);

@@ -3,3 +3,13 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+.admin-drawer-content-heading{
+    color: white;
+    font-size:xx-large;
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    padding: 0;
+    margin-left: 10px;
+}

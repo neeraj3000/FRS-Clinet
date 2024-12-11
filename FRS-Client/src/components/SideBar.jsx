@@ -312,7 +312,7 @@ export default function MiniDrawer({
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
-                to={`/${text.toLowerCase().replace(/\s/g, "")}`}
+                to={`/admin/${text.toLowerCase().replace(/\s/g, "")}`}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
@@ -361,7 +361,9 @@ export default function MiniDrawer({
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
+
       <Outlet />
+
       </Box>
     </Box>
   );

@@ -4,7 +4,7 @@ import SideBar from "../../components/SideBar";
 export default function AdminDashBoard() {
   const drawerItems = [
     "dashboard",
-    "manage-students",
+    "Today Classes",
     "manage-faculty",
     "drafts",
     "all-mail",
@@ -32,7 +32,7 @@ export default function AdminDashBoard() {
         title="Admin"
         drawerItems={drawerItems}
       />
-      {/* Outlet will render the matched route */}
+      
     </>
   );
 }

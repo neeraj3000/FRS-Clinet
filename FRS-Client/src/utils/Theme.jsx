@@ -17,6 +17,9 @@ const darkTheme = createTheme({
             primary: '#ffffff', // Text color for primary text
             secondary: '#b0bec5', // Text color for secondary text
         },
+        // action: {
+        //     hover: 'rgba(3, 218, 198, 0.2)',  // Customize the hover color here
+        // }
     },
     typography: {
         fontFamily: 'Arial, sans-serif', // Set global font family

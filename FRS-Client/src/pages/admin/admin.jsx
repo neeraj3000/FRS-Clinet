@@ -3,10 +3,10 @@ import SideBar from "../../components/SideBar";
 
 export default function AdminDashBoard() {
   const drawerItems = [
-    "dashboard",
+    "Dashboard",
     "Today Classes",
-    "manage-faculty",
-    "drafts",
+    "Manage Faculty",
+    "Student Visualisation",
     "all-mail",
     "trash",
     "spam",

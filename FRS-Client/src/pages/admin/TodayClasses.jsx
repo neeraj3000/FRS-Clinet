@@ -12,6 +12,7 @@ import YearCard from "../../components/BasicCard";
 TODO
 * place all cards in exacr center and place the one by one in down in mobile devices 
 * style cards 
+* show past classes 
 
 */
 

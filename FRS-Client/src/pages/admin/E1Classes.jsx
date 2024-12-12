@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import BasicTable from "../../components/BasicTable";
 import { Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button, Grid, Divider } from "@mui/material";
 
+/*
+TODO
+* add interactvity in diaglog show more details about class like pass classes 
+*/
+
 // Define the columns
 const columns = [
   { field: "time", headerName: "Started Time", align: "left" },

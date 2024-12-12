@@ -6,6 +6,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Admin from "./pages/admin/admin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import TodayClasses from "./pages/admin/TodayClasses"
+import ManageFaculty from "./pages/admin/ManageFaculty";
+import StudentVisualisation from "./pages/admin/StudentVisualisation";
 
 import E1Classes from "./pages/admin/E1Classes"
 import E2Classes from "./pages/admin/E2Classes"
@@ -42,7 +44,8 @@ function App() {
             <Route path="/admin/todayclasses/e2" element={<E2Classes />} /> 
             <Route path="/admin/todayclasses/e3" element={<E3Classes />} /> 
             <Route path="/admin/todayclasses/e4" element={<E4Classes />} /> 
-
+            <Route path="/admin/managefaculty" element={<ManageFaculty />} /> 
+            <Route path="/admin/studentvisualisation" element={<StudentVisualisation />} /> 
 
 
           </Route>

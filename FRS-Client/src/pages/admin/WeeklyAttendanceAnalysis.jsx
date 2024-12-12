@@ -1,19 +1,27 @@
-import React from "react";
-import BasicLineChart from "../../components/BasicLineChart";
+import React, { useState } from "react";
+import BasicBarChart from "../../components/BasicBarChart"; // import your BasicBars component
 import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-function DailyAttendanceAnalysis() {
-  const studentAttendanceData = {
-    xAxisData: [1, 2, 3, 4, 5, 6, 7], // Days of the week, for example
-    seriesData: [68, 67, 70, 65, 62, 72, 69], // 1 for present, 0 for absent
-  };
+function WeeklyAttendanceAnalysis() {
+  const [xAxisData] = useState(["Group A", "Group B" , "Group c"]);
+  const [seriesData] = useState([
+    { 
+      data: [69, 70 , 60], 
+      label: 'Series 1' 
+    }, 
+    { 
+      data: [10, 12 , 8], 
+      label: 'Series 2' 
+    }, 
+    // { data: [60, 10] }, // Series 3
+  ]);
 
-  const [selectedExam, setSelectedExam] = React.useState("E1");
-  const [selectedSubject, setSelectedSubject] = React.useState("all");
+  const [selectedExam, setSelectedExam] = useState("E1");
+  const [selectedSubject, setSelectedSubject] = useState("all");
   const exams = ["E1", "E2", "E3", "E4"];
   const subjects = ["all", "sub1", "sub2", "sub3", "sub4", "sub5"];
 
@@ -29,7 +37,7 @@ function DailyAttendanceAnalysis() {
 
   return (
     <div style={{ margin: "20px" }}>
-      <h2>Daily Student Analysis</h2>
+      <h2>Weekly Student Anlysis</h2>
 
       <Box sx={{ display: "flex", gap: 3, mt: 3, alignItems: "center" }}>
         {/* Exam Dropdown */}
@@ -69,11 +77,9 @@ function DailyAttendanceAnalysis() {
         </FormControl>
       </Box>
 
-      <BasicLineChart
-        xAxisData={studentAttendanceData.xAxisData}
-        seriesData={studentAttendanceData.seriesData}
-        xAxisScale={{ type: "linear", min: 0, max: 10 }}
-        yAxisScale={{ type: "linear", min: 0, max: 1 }}
+      <BasicBarChart
+        xAxisData={xAxisData} // Passing x-axis data as prop
+        seriesData={seriesData} // Passing series data as prop
         width={550}
         height={350}
       />
@@ -81,4 +87,4 @@ function DailyAttendanceAnalysis() {
   );
 }
 
-export default DailyAttendanceAnalysis;
+export default WeeklyAttendanceAnalysis;

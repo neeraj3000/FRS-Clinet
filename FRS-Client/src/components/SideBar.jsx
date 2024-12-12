@@ -347,7 +347,7 @@ export default function MiniDrawer({
         sx={{
           flexGrow: 1,
           bgcolor: (theme) => theme.palette.background.default,
-          p: 3,
+          p: 2,
         }}
       >
         <DrawerHeader />

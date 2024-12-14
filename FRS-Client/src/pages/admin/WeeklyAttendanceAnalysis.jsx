@@ -36,13 +36,13 @@ function WeeklyAttendanceAnalysis() {
   };
 
   return (
-    <div style={{ margin: "20px" }}>
+    <div style={{ margin: "20px",width:'fit-content' }}>
       <h2>Weekly Student Anlysis</h2>
 
-      <Box sx={{ display: "flex", gap: 3, mt: 3, alignItems: "center" }}>
+      <Box sx={{ display: "flex", gap: 3, mt: 3, alignItems: "center" , width:'fit-content' }}>
         {/* Exam Dropdown */}
         <FormControl sx={{ minWidth: 150, marginRight: 2 }} size="small">
-          <InputLabel id="exam-select-label">Exam</InputLabel>
+          <InputLabel id="exam-select-label">Year</InputLabel>
           <Select
             labelId="exam-select-label"
             id="exam-select"
@@ -80,8 +80,8 @@ function WeeklyAttendanceAnalysis() {
       <BasicBarChart
         xAxisData={xAxisData} // Passing x-axis data as prop
         seriesData={seriesData} // Passing series data as prop
-        width={550}
-        height={350}
+        width={450}
+        height={300}
       />
     </div>
   );

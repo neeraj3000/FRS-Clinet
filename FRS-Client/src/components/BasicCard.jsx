@@ -6,9 +6,9 @@ import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import { Link } from 'react-router-dom';
 
-export default function ActionAreaCard({ image, title, description, url }) {
+export default function ActionAreaCard({ image, title, description, url , width=345 }) {
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: width }}>
       {/* Wrap the entire card in a Link to navigate to the desired URL */}
       <Link to={url} style={{ textDecoration: 'none', color: 'inherit' }}>
         <CardActionArea>

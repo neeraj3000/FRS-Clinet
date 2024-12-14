@@ -6,6 +6,7 @@ import Box from "@mui/material/Box";
 
 import CardImage from "../../assests/admin/YearCard.png";
 import YearCard from "../../components/BasicCard";
+import Button from "@mui/material/Button"
 
 
 /*
@@ -53,9 +54,13 @@ export default function TodayClasses() {
           <YearCard image={CardImage} title={"E2"} url={'/admin/todayclasses/e2'}></YearCard>
         </Grid>
         <Grid size={6}>
-          <YearCard image={CardImage} title={"E3"} url={'/admin/todayclasses/e3'}></YearCard> </Grid>
+          <YearCard image={CardImage} title={"E3"} url={'/admin/todayclasses/e3'}></YearCard>
+        </Grid>
         <Grid size={6}>
           <YearCard image={CardImage} title={"E4"} url={'/admin/todayclasses/e4'}></YearCard>
+          <Button variant="contained"  size='small'>
+                Search
+              </Button>
         </Grid>
       </Grid>
     </Box>

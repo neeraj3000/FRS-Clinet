@@ -1,0 +1,31 @@
+.heatmap-container {
+    width: 80vw; /* Adjust the width as needed */
+    margin: 0 auto; /* Center the heatmap */
+    padding: 20px; /* Add some padding */
+    border: 1px solid #ddd; /* Optional: Add a border */
+    border-radius: 8px; /* Optional: Rounded corners */
+/*👉    background-color: #f9f9f9; ➡ Optional: Background color ⬅👈*/
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: Shadow for depth */
+  }
+  
+  .color-empty {
+    fill: #ebedf0; /* Color for empty values */
+  }
+  
+  .color-github-0 {
+    fill: #ebedf0; /* Color for 0 attendance */
+  }
+  
+  .color-github-1 {
+    fill: #c6e48b; /* Color for 1 attendance */
+  }
+  
+  .color-github-2 {
+    fill: #7bc96f; /* Color for 2 attendance */
+  }
+  
+  .color-github-3 {
+    fill: #239a3b; /* Color for 3 attendance */
+  }
+  
+  /* Add more color classes as needed */

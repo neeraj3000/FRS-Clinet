@@ -28,7 +28,7 @@ function DailyAttendanceAnalysis() {
   };
 
   return (
-    <div style={{ margin: "20px" }}>
+    <div style={{ margin: "20px" , width:'fit-content' }}>
       <h2>Daily Student Analysis</h2>
 
       <Box sx={{ display: "flex", gap: 3, mt: 3, alignItems: "center" }}>
@@ -74,8 +74,8 @@ function DailyAttendanceAnalysis() {
         seriesData={studentAttendanceData.seriesData}
         xAxisScale={{ type: "linear", min: 0, max: 10 }}
         yAxisScale={{ type: "linear", min: 0, max: 1 }}
-        width={550}
-        height={350}
+        width={450}
+        height={300}
       />
     </div>
   );

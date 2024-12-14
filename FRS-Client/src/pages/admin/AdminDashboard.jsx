@@ -1,142 +1,76 @@
 import * as React from "react";
-import { styled, useTheme, ThemeProvider, createTheme } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import { AppProvider } from "@toolpad/core/AppProvider";
-import {
-  PageContainer,
-  PageContainerToolbar,
-} from "@toolpad/core/PageContainer";
+import { PageContainer } from "@toolpad/core/PageContainer";
 import Grid from "@mui/material/Grid2";
-import Paper from "@mui/material/Paper";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import PrintIcon from "@mui/icons-material/Print";
-import DownloadIcon from "@mui/icons-material/Download";
 
-import Link from "@mui/joy/Link";
-import Card from "@mui/joy/Card"; 
-import CardContent from "@mui/joy/CardContent";
-import Chip from "@mui/joy/Chip";
+import Box from "@mui/joy/Box";
 import Typography from "@mui/joy/Typography";
 
-// const NAVIGATION = [
-//   {
-//     segment: 'orders',
-//     title: 'Orders',
-//     icon: <DashboardIcon />,
-//   },
-// ];
+// theme
+import darkTheme from "../../utils/Theme"; // Import your theme
 
-// function useDemoRouter(initialPath) {
-//   const [pathname, setPathname] = React.useState(initialPath);
+// table
+import StudentAbsentiesTable from "./StudentAbsentiesTable";
+import FacultyAbsentiesTable from "./FacultyAbsentTable";
 
-//   const router = React.useMemo(() => {
-//     return {
-//       pathname,
-//       searchParams: new URLSearchParams(),
-//       navigate: (path) => setPathname(String(path)),
-//     };
-//   }, [pathname]);
-
-//   return router;
-// }
+// calender
+// import Calender from './DashboardCalender'
 
 const Skeleton = styled("div")(({ theme, height }) => ({
-  backgroundColor: theme.palette.action.hover,
+  // backgroundColor: theme.palette.action.hover, // Use theme from context
   borderRadius: theme.shape.borderRadius,
   height,
+  borderWidth: "2px",
+  borderStyle: "solid",
+  borderColor: "gray",
   padding: "10px",
   content: '" "',
+  padding: 0,
 }));
 
-// function PageToolbar() {
-//   return (
-//     <PageContainerToolbar>
-//       <Stack direction="row" spacing={1} alignItems="center">
-//         <Button
-//           variant="outlined"
-//           size="small"
-//           color="neutral"
-//           startIcon={<DownloadIcon fontSize="inherit" />}
-//         >
-//           Download
-//         </Button>
-//         <Button
-//           variant="outlined"
-//           size="small"
-//           color="neutral"
-//           startIcon={<PrintIcon fontSize="inherit" />}
-//         >
-//           Print
-//         </Button>
-//       </Stack>
-//     </PageContainerToolbar>
-//   );
-// }
-
 export default function PageContainerBasic(props) {
-  //   const { window } = props;
-  //   const router = useDemoRouter('/orders');
-  //   const theme = useTheme();
-  //   // Remove this const when copying and pasting into your project.
-  //   const demoWindow = window ? window() : undefined;
-
+  console.log("happy");
+  console.log(darkTheme.palette.action.hover);
   return (
     <PageContainer>
-      <Grid container spacing={1}>
-        <Grid size={12}>
-          <Skeleton height={50}>
-            <Card
-              variant="outlined"
-              orientation="horizontal"
-              sx={{
-                width: 320,
-                "&:hover": {
-                  boxShadow: "md",
-                  borderColor: "neutral.outlinedHoverBorder",
-                },
-              }}
-            >
-
-              <CardContent>
-                <Typography level="title-lg" id="card-description">
-                  Yosemite Park
-                </Typography>
-                <Typography
-                  level="body-sm"
-                  aria-describedby="card-description"
-                  sx={{ mb: 1 }}
-                >
-                  <Link
-                    overlay
-                    underline="none"
-                    href="#interactive-card"
-                    sx={{ color: "text.tertiary" }}
-                  >
-                    California, USA
-                  </Link>
-                </Typography>
-                <Chip
-                  variant="outlined"
-                  color="primary"
-                  size="sm"
-                  sx={{ pointerEvents: "none" }}
-                >
-                  Cool weather all day long
-                </Chip>
-              </CardContent>
-            </Card>
-          </Skeleton>
+      <Grid container spacing={1} sx={{ margin: "20px" }}>
+        <Grid size={6}>
+          {/* <Typography
+          sx={{ flex: '1 1 100%',display:"flex",JustifyContent:'center',margin:'10px' }}
+          variant="h2"
+          component="div"
+          >
+          Absenties
+        </Typography> */}
+          <p class="admin-drawer-content-heading">Good Mornin Admin</p>
         </Grid>
-        <Grid size={12}>
-          <Skeleton height={14} />
-        </Grid>
+      </Grid>
+      <Grid
+        container
+        spacing={1}
+        sx={{ display: "flex", justifyContent: "space-between" }}
+      >
+        {/* <Grid size={4}>
+          <Typography variant="subtitle1" gutterBottom align="center">
+            8:02:09 AM
+          </Typography>
+          <Typography variant="caption" gutterBottom align="center">
+            Realtime Insight
+          </Typography>
+        </Grid> */}
         <Grid size={4}>
-          <Skeleton height={100} />
+          {/* <Skeleton height={200}> */}
+
+          <StudentAbsentiesTable></StudentAbsentiesTable>
+          {/* </Skeleton> */}
         </Grid>
-        <Grid size={8}>
-          <Skeleton height={100} />
+
+        <Grid size={4}>
+          <FacultyAbsentiesTable></FacultyAbsentiesTable>
+          {/* <Calender></Calender> */}
         </Grid>
+        <Grid size={8}></Grid>
       </Grid>
     </PageContainer>
   );

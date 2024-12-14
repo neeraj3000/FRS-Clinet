@@ -110,23 +110,11 @@ export default function MiniDrawer({
   secondaryItems = ["All mail", "Trash", "Spam"],
 }) {
   const theme = useTheme();
-  //   const [open, setOpen] = React.useState(false);
-
-  //   const handleDrawerOpen = () => {
-  //     setOpen(true);
-  //   };
-
-  //   const handleDrawerClose = () => {
-  //     setOpen(false);
-  //   };
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  // const [selectedOption, setSelectedOption] = React.useState("Inbox");
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -220,7 +208,6 @@ export default function MiniDrawer({
   );
 
   return (
-
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} drawerWidth={drawerWidth}>
@@ -290,12 +277,6 @@ export default function MiniDrawer({
       {renderMobileMenu}
       {renderMenu}
 
-      {/* <NavBar 
-    oopen={open}
-    handleDrawerOpen={handleDrawerOpen}
-    >
-    </NavBar> */}
-
       <Drawer variant="permanent" open={open} drawerWidth={drawerWidth}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
@@ -312,12 +293,13 @@ export default function MiniDrawer({
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
-                to={`/${text.toLowerCase().replace(/\s/g, "")}`}
+                to={`/admin/${text.toLowerCase().replace(/\s/g, "")}`}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
                 }}
+                onClick={handleDrawerClose} // Close the drawer on item click
               >
                 <ListItemIcon
                   sx={{
@@ -343,6 +325,7 @@ export default function MiniDrawer({
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
                 }}
+                onClick={handleDrawerClose} // Close the drawer on item click
               >
                 <ListItemIcon
                   sx={{
@@ -359,9 +342,16 @@ export default function MiniDrawer({
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          bgcolor: (theme) => theme.palette.background.default,
+          p: 2,
+        }}
+      >
         <DrawerHeader />
-      <Outlet />
+        <Outlet /> {/* Placeholder for nested routes */}
       </Box>
     </Box>
   );

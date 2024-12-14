@@ -3,16 +3,16 @@ import SideBar from "../../components/SideBar";
 
 export default function AdminDashBoard() {
   const drawerItems = [
-    "dashboard",
-    "manage-students",
-    "manage-faculty",
-    "drafts",
+    "Dashboard",
+    "Today Classes",
+    "Manage Faculty",
+    "Student Visualisation",
     "all-mail",
     "trash",
     "spam",
   ];
 
-  const [open, setOpen] = useState(true);  // Keep drawer open by default
+  const [open, setOpen] = useState(false);  // Keep drawer open by default
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -32,7 +32,7 @@ export default function AdminDashBoard() {
         title="Admin"
         drawerItems={drawerItems}
       />
-      {/* Outlet will render the matched route */}
+      
     </>
   );
 }

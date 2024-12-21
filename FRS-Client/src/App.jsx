@@ -8,6 +8,8 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import TodayClasses from "./pages/admin/TodayClasses";
 import ManageFaculty from "./pages/admin/ManageFaculty";
 import StudentVisualisation from "./pages/admin/StudentVisualisation";
+import LoginForm from "./pages/Login";
+import StudentDashboard from "./pages/StudentDashboard";
 
 import E1Classes from "./pages/admin/E1Classes";
 import E2Classes from "./pages/admin/E2Classes";
@@ -28,7 +30,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-          {/* Admin route */}
+        login_and_student_Dashboard
+          {/* Login Route */}
+          <Route path="/login" element={<LoginForm />} />
+          {/* student Route */}
+          <Route path="/studentDashboard" element={<StudentDashboard />} />
+          {/* Admin Routes */}
+        main
           <Route path="/admin" element={<Admin />}>
             {/* Nested admin routes */}
             <Route path="dashboard" element={<AdminDashboard />} />

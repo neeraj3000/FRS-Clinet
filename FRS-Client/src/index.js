@@ -5,8 +5,9 @@ import App from "./App";
 
 function renderReact(){
     return (
-
-        <App></App>
+        <React.StrictMode>
+            <App></App>
+        </React.StrictMode>
     );
 }
 

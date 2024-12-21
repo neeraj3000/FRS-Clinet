@@ -7,7 +7,7 @@ export default function AdminDashBoard() {
     "Today Classes",
     "Manage Faculty",
     "Student Visualisation",
-    "all-mail",
+    "all-mail", 
     "trash",
     "spam",
   ];

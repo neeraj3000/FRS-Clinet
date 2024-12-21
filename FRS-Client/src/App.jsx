@@ -2,7 +2,7 @@ import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import "./styles/app.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import { Navigate } from "react-router-dom";
 import Admin from "./pages/admin/admin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import TodayClasses from "./pages/admin/TodayClasses";
@@ -17,6 +17,12 @@ import E4Classes from "./pages/admin/E4Classes";
 import Faculty from "./pages/admin/faculty";
 
 import theme from "./utils/Theme";
+
+import Dashboard from "./pages/Faculty/DashBoard";
+import Profile from "./pages/Faculty/Profile";
+import Settings from "./pages/Faculty/settings";
+import FacultyLayout from "./pages/Faculty/Faculty_Layout";
+import ClassesList from "./pages/Faculty/ClassesList";
 
 function App() {
   console.log(theme.palette.action.hover);
@@ -38,6 +44,13 @@ function App() {
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="facultypage" element={<Faculty />} /> 
           </Route>
+          <Route path="/faculty" element={<FacultyLayout />}>
+             <Route index element={<Navigate to="/faculty/dashboard" />} /> 
+             <Route path="dashboard" element={<Dashboard />} />
+             <Route path="classes" element={<ClassesList />} />
+             <Route path="profile" element={<Profile />} />
+             <Route path="settings" element={<Settings />} />
+           </Route>
         </Routes>
       </Router>
     </ThemeProvider>

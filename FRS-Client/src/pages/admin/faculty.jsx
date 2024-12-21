@@ -103,8 +103,5 @@ const Faculty = () => (
 );
 
 // Render the app
-// const root = ReactDOM.createRoot(document.getElementById('root'));
-// root.render(<Faculty />);
-// Ensure Faculty is exported as default
 
 

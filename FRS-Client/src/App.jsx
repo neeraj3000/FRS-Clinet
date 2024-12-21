@@ -14,7 +14,6 @@ import E2Classes from "./pages/admin/E2Classes";
 import E3Classes from "./pages/admin/E3Classes";
 import E4Classes from "./pages/admin/E4Classes";
 
-import Faculty from "./pages/admin/faculty";
 
 import theme from "./utils/Theme";
 
@@ -25,15 +24,13 @@ import FacultyLayout from "./pages/Faculty/Faculty_Layout";
 import ClassesList from "./pages/Faculty/ClassesList";
 
 function App() {
-  console.log(theme.palette.action.hover);
-  console.log(theme.palette);
-
   return (
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
+          {/* Admin route */}
           <Route path="/admin" element={<Admin />}>
-            {/* Nested routes */}
+            {/* Nested admin routes */}
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="todayclasses" element={<TodayClasses />} />
             <Route path="todayclasses/e1" element={<E1Classes />} />
@@ -42,7 +39,7 @@ function App() {
             <Route path="todayclasses/e4" element={<E4Classes />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
-            <Route path="facultypage" element={<Faculty />} /> 
+
           </Route>
           <Route path="/faculty" element={<FacultyLayout />}>
              <Route index element={<Navigate to="/faculty/dashboard" />} /> 

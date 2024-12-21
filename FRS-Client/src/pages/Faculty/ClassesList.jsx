@@ -1,208 +1,224 @@
 import React, { useState } from 'react';
 import {
   Box,
+  Card,
+  CardContent,
+  Grid,
+  Typography,
   Button,
-  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TablePagination,
-  Grid,
+  IconButton,
+  Paper,
 } from '@mui/material';
-import { AccessTime as TimeIcon, Group as GroupIcon } from '@mui/icons-material';
+import { ArrowBack } from '@mui/icons-material';
 
 const ClassesList = () => {
-  // Define the classes array directly inside the component
-  const classes = [
-    { time: '09:00 AM', subject: 'E2 Sec-A', students: 32, marked: false },
-    { time: '10:30 AM', subject: 'E2 Sec-B', students: 32, marked: false },
-    { time: '11:45 AM', subject: 'E1 Sec-E', students: 28, marked: false },
-    { time: '02:00 PM', subject: 'E2 Sec-B', students: 35, marked: false },
-    { time: '03:15 PM', subject: 'E3 Sec-A', students: 30, marked: false },
-    { time: '04:30 PM', subject: 'E1 Sec-C', students: 25, marked: false },
-    { time: '05:45 PM', subject: 'E1 Sec-F', students: 27, marked: false },
+  const [selectedYear, setSelectedYear] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState(null);
+  const [view, setView] = useState('years');
+
+  // Example data structure
+  const years = ['E1', 'E2', 'E3', 'E4'];
+  const sections = ['A', 'B', 'C', 'D', 'E', 'F'];
+  
+  const students = [
+    { rollNo: 1, id: 'STU001', name: 'Alice Johnson', status: true },
+    { rollNo: 2, id: 'STU002', name: 'Bob Smith', status: false },
+    { rollNo: 3, id: 'STU003', name: 'Charlie Brown', status: true },
+    { rollNo: 4, id: 'STU004', name: 'David Wilson', status: true },
+    { rollNo: 5, id: 'STU005', name: 'Eve Williams', status: false },
+    { rollNo: 6, id: 'STU006', name: 'Frank Miller', status: true },
+    { rollNo: 7, id: 'STU007', name: 'Grace Davis', status: true },
+    { rollNo: 8, id: 'STU008', name: 'Henry Garcia', status: false },
   ];
 
-  const [open, setOpen] = useState(false);
-  const [attendanceData, setAttendanceData] = useState([]);
-  const [pageClasses, setPageClasses] = useState(0);
-  const [rowsPerPageClasses, setRowsPerPageClasses] = useState(5);
-  const [pageAttendance, setPageAttendance] = useState(0);
-  const [rowsPerPageAttendance, setRowsPerPageAttendance] = useState(5);
-
-  const handleViewAttendance = (classData) => {
-    const exampleAttendance = [
-      { rollNo: 1, id: 'STU001', name: 'Alice', status: true },
-      { rollNo: 2, id: 'STU002', name: 'Bob', status: false },
-      { rollNo: 3, id: 'STU003', name: 'Charlie', status: true },
-      { rollNo: 4, id: 'STU004', name: 'Daisy', status: true },
-      { rollNo: 5, id: 'STU005', name: 'Eve', status: false },
-      { rollNo: 6, id: 'STU006', name: 'Frank', status: true },
-      { rollNo: 7, id: 'STU007', name: 'Grace', status: true },
-      { rollNo: 8, id: 'STU008', name: 'Hank', status: false },
-      { rollNo: 9, id: 'STU009', name: 'Ivy', status: true },
-      { rollNo: 10, id: 'STU010', name: 'Jack', status: true },
-    ];
-    setAttendanceData(exampleAttendance);
-    setOpen(true);
+  const handleYearClick = (year) => {
+    setSelectedYear(year);
+    setView('sections');
   };
 
-  const handleClose = () => setOpen(false);
-
-  // Pagination for "Today's Classes"
-  const handleChangePageClasses = (event, newPage) => {
-    setPageClasses(newPage);
+  const handleSectionClick = (section) => {
+    setSelectedSection(section);
   };
 
-  const handleChangeRowsPerPageClasses = (event) => {
-    setRowsPerPageClasses(parseInt(event.target.value, 10));
-    setPageClasses(0);
+  const handleBack = () => {
+    if (view === 'sections') {
+      setView('years');
+      setSelectedYear(null);
+    }
   };
 
-  const paginatedClasses = classes.slice(
-    pageClasses * rowsPerPageClasses,
-    pageClasses * rowsPerPageClasses + rowsPerPageClasses
+  const handleViewAttendance = (section) => {
+    setSelectedSection(section);
+    setDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const renderYearCards = () => (
+    <Grid container spacing={4} sx={{ p: 4 }}>
+      {years.map((year) => (
+        <Grid item xs={12} sm={6} md={3} key={year}>
+          <Card 
+            sx={{ 
+              cursor: 'pointer',
+              transition: 'box-shadow 0.3s',
+              '&:hover': {
+                boxShadow: 6,
+              },
+            }}
+            onClick={() => handleYearClick(year)}
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') handleYearClick(year);
+            }}
+          >
+            <CardContent sx={{ textAlign: 'center', py: 4 }}>
+              <Typography variant="h4" component="div" gutterBottom>
+                {year}
+              </Typography>
+              <Typography color="text.secondary">
+                Click to view sections
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+      ))}
+    </Grid>
   );
 
-  // Pagination for "View Attendance"
-  const handleChangePageAttendance = (event, newPage) => {
-    setPageAttendance(newPage);
-  };
+  const renderSectionCards = () => (
+    <Box sx={{ p: 4 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
+        <IconButton 
+          onClick={handleBack} 
+          sx={{ mr: 2 }}
+          aria-label="Go back to years view"
+        >
+          <ArrowBack />
+        </IconButton>
+        <Typography variant="h5">
+          Sections for {selectedYear}
+        </Typography>
+      </Box>
+      
+      <Grid container spacing={4}>
+        {sections.map((section) => (
+          <Grid item xs={12} sm={6} md={4} key={section}>
+            <Card>
+              <CardContent sx={{ p: 3 }}>
+                <Typography variant="h6" gutterBottom>
+                  Section {section}
+                </Typography>
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  gap: 2 
+                }}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => handleSectionClick(section)}
+                    aria-label={`Mark attendance for Section ${section}`}
+                  >
+                    Mark Attendance
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    onClick={() => handleViewAttendance(section)}
+                    aria-label={`View attendance for Section ${section}`}
+                  >
+                    View Attendance
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
 
-  const handleChangeRowsPerPageAttendance = (event) => {
-    setRowsPerPageAttendance(parseInt(event.target.value, 10));
-    setPageAttendance(0);
-  };
-
-  const paginatedAttendanceData = attendanceData.slice(
-    pageAttendance * rowsPerPageAttendance,
-    pageAttendance * rowsPerPageAttendance + rowsPerPageAttendance
+  const renderAttendanceDialog = () => (
+    <Dialog 
+      open={dialogOpen} 
+      onClose={handleCloseDialog}
+      maxWidth="md"
+      fullWidth
+      aria-labelledby="attendance-dialog-title"
+      keepMounted={false}
+      disablePortal={false}
+      hideBackdrop={false}
+    >
+      <DialogTitle id="attendance-dialog-title">
+        {selectedYear} Section {selectedSection} - Attendance
+      </DialogTitle>
+      <DialogContent>
+        <TableContainer component={Paper} sx={{ mt: 2 }}>
+          <Table aria-label="Attendance table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Roll No</TableCell>
+                <TableCell>ID</TableCell>
+                <TableCell>Name</TableCell>
+                <TableCell>Status</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {students.map((student) => (
+                <TableRow key={student.id}>
+                  <TableCell>{student.rollNo}</TableCell>
+                  <TableCell>{student.id}</TableCell>
+                  <TableCell>{student.name}</TableCell>
+                  <TableCell>
+                    <Typography
+                      color={student.status ? 'success.main' : 'error.main'}
+                      aria-label={student.status ? 'Present' : 'Absent'}
+                    >
+                      {student.status ? 'Present' : 'Absent'}
+                    </Typography>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </DialogContent>
+      <DialogActions>
+        <Button 
+          onClick={handleCloseDialog} 
+          color="primary"
+          aria-label="Close attendance dialog"
+        >
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 
   return (
-    <Paper sx={{ p: 2, mb: 2 }}>
-      <Typography variant="h6" gutterBottom>
-        Today's Classes
-      </Typography>
-
-      {/* "Today's Classes" List */}
-      {paginatedClasses.map((classItem, index) => (
-        <Paper
-          key={index}
-          sx={{
-            p: 2,
-            mb: 2,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-          elevation={1}
-        >
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <TimeIcon sx={{ mr: 1, fontSize: 'small' }} />
-              <Typography variant="body2" color="textSecondary">
-                {classItem.time}
-              </Typography>
-            </Box>
-            <Typography variant="h6">{classItem.subject}</Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <GroupIcon sx={{ mr: 1, fontSize: 'small' }} />
-              <Typography variant="body2" color="textSecondary">
-                {classItem.students} Students
-              </Typography>
-            </Box>
-          </Box>
-          <Box>
-            <Grid container spacing={2} direction={{ xs: 'column', sm: 'row' }}>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ textTransform: 'none' }}
-                >
-                  Mark Attendance
-                </Button>
-              </Grid>
-              <Grid item>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ textTransform: 'none' }}
-                  onClick={() => handleViewAttendance(classItem)}
-                >
-                  View Attendance
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
-        </Paper>
-      ))}
-
-      {/* Pagination for "Today's Classes" */}
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 15]}
-        component="div"
-        count={classes.length}
-        rowsPerPage={rowsPerPageClasses}
-        page={pageClasses}
-        onPageChange={handleChangePageClasses}
-        onRowsPerPageChange={handleChangeRowsPerPageClasses}
-      />
-
-      {/* "View Attendance" Dialog */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-        <DialogTitle>Attendance Details</DialogTitle>
-        <DialogContent>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Roll No</TableCell>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {paginatedAttendanceData.map((student, idx) => (
-                  <TableRow key={idx}>
-                    <TableCell>{student.rollNo}</TableCell>
-                    <TableCell>{student.id}</TableCell>
-                    <TableCell>{student.name}</TableCell>
-                    <TableCell>
-                      {student.status ? 'Present' : 'Absent'}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center' }}>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 15]}
-            component="div"
-            count={attendanceData.length}
-            rowsPerPage={rowsPerPageAttendance}
-            page={pageAttendance}
-            onPageChange={handleChangePageAttendance}
-            onRowsPerPageChange={handleChangeRowsPerPageAttendance}
-          />
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Paper>
+    <Box 
+      sx={{ maxWidth: 1200, mx: 'auto' }}
+      role="main"
+    >
+      {view === 'years' && renderYearCards()}
+      {view === 'sections' && renderSectionCards()}
+      {renderAttendanceDialog()}
+    </Box>
   );
 };
 

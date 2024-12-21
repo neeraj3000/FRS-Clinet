@@ -7,9 +7,7 @@ import {
   ListItem, 
   ListItemIcon, 
   ListItemText,
-  Divider,
-  Avatar,
-  Typography
+  Divider
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -24,15 +22,6 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, isMobile }) => {
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Mock faculty data - replace with actual data from your auth system
-  const facultyInfo = {
-    name: "Dr. John Doe",
-    facultyId: "FAC2024001",
-    department: "Computer Science",
-    email: "john.doe@university.edu",
-    avatar: "JD"
-  };
 
   const handleProfileClick = (event) => {
     setProfileAnchorEl(event.currentTarget);
@@ -77,25 +66,6 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, isMobile }) => {
 
   const drawer = (
     <Box sx={{ bgcolor: 'background.paper', height: '100%' }}>
-      <Box sx={{ p: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Avatar 
-          sx={{ 
-            width: 64, 
-            height: 64, 
-            bgcolor: 'primary.main',
-            mb: 1 
-          }}
-        >
-          {facultyInfo.avatar}
-        </Avatar>
-        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-          {facultyInfo.name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {facultyInfo.department}
-        </Typography>
-      </Box>
-      <Divider />
       <List>
         {menuItems.map((item) => (
           <ListItem 

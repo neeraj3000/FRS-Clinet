@@ -1,8 +1,8 @@
 import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import "./styles/app.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import Admin from "./pages/admin/admin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import TodayClasses from "./pages/admin/TodayClasses";
@@ -34,7 +34,6 @@ function App() {
         <Routes>
           <Route path="/admin" element={<Admin />}>
             {/* Nested routes */}
-
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="todayclasses" element={<TodayClasses />} />
             <Route path="todayclasses/e1" element={<E1Classes />} />
@@ -43,16 +42,15 @@ function App() {
             <Route path="todayclasses/e4" element={<E4Classes />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
+            <Route path="facultypage" element={<Faculty />} /> 
           </Route>
-          <Route path="facultypage" element={<Faculty />} /> 
-
           <Route path="/faculty" element={<FacultyLayout />}>
-            <Route index element={<Navigate to="/faculty/dashboard" />} /> 
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="classes" element={<ClassesList />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>            
+             <Route index element={<Navigate to="/faculty/dashboard" />} /> 
+             <Route path="dashboard" element={<Dashboard />} />
+             <Route path="classes" element={<ClassesList />} />
+             <Route path="profile" element={<Profile />} />
+             <Route path="settings" element={<Settings />} />
+           </Route>
         </Routes>
       </Router>
     </ThemeProvider>

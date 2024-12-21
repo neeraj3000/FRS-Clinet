@@ -30,8 +30,6 @@ const Skeleton = styled("div")(({ theme, height }) => ({
 }));
 
 export default function PageContainerBasic(props) {
-  console.log("happy");
-  console.log(darkTheme.palette.action.hover);
   return (
     <PageContainer>
       <Grid container spacing={1} sx={{ margin: "20px" }}>
@@ -43,7 +41,7 @@ export default function PageContainerBasic(props) {
           >
           Absenties
         </Typography> */}
-          <p class="admin-drawer-content-heading">Good Mornin Admin</p>
+          <p>Good Mornin Admin</p>
         </Grid>
       </Grid>
       <Grid

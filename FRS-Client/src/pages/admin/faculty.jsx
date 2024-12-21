@@ -104,5 +104,4 @@ const Faculty = () => (
 
 // Render the app
 
-// Ensure Faculty is exported as default
-export default Faculty;
+

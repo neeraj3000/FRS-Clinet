@@ -105,9 +105,9 @@ export default function MiniDrawer({
   handleDrawerOpen,
   handleDrawerClose,
   drawerWidth = drawerWidthDefault,
-  title = "Mini variant drawer",
-  drawerItems = ["Inbox", "Starred", "Send email", "Drafts"],
-  secondaryItems = ["All mail", "Trash", "Spam"],
+  title = "",
+  drawerItems = [],
+  secondaryItems = [] 
 }) {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -293,7 +293,7 @@ export default function MiniDrawer({
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
-                to={`/admin/${text.toLowerCase().replace(/\s/g, "")}`}
+                to={`/${title.toLowerCase()}/${text.toLowerCase().replace(/\s/g, "")}`}
                 sx={{
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",

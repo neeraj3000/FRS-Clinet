@@ -105,10 +105,10 @@ const ClassDetails = () => {
         sx={{
           p: 2,
           mb: 2,
-          backgroundColor: "#6a1b9a", // Changed blue color
+          backgroundColor: "#000000", // Changed blue color
           color: "white",
           borderRadius: "12px",
-          height: "150px", // Decreased height
+          height: "350px", // Decreased height
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>

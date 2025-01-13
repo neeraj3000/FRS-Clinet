@@ -63,12 +63,10 @@ function App() {
             <Route path="todayclasses/:year" element={<ManageClasses />} />
             {/* <Route path="todayclasses/:year" element={<ClassList />} />  */}
             <Route path="todayclasses/:year/:classId" element={<ClassDetails />} /> {/* Use element instead of component */}
-            {/* Uncomment and adjust these routes as needed */}
-            {/* <Route path="todayclasses/e1" element={<E1Classes />} />
-            <Route path="todayclasses/e2" element={<E2Classes />} />
-            <Route path="todayclasses/e3" element={<E3Classes />} />
-            <Route path="todayclasses/e4" element={<E4Classes />} /> */}
+
             <Route path="managefaculty" element={<ManageFaculty />} />
+            <Route path="managefaculty/:year" element={<ManageFaculty />} />
+
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />
 

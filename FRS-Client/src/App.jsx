@@ -13,7 +13,8 @@ import StudentVisualisation from "./pages/admin/StudentVisualisation";
 import LoginForm from "./pages/Login";
 import SignUpFrom from "./pages/SignUp"
 import AddStudent from "./pages/adduser"
-
+import Forgot from "./pages/Forgot";
+import Setpassword from "./pages/Setpassword";
 import ClassList from "./pages/admin/ClassList";
 import ClassDetails from "./pages/admin/ClassDetails";
 
@@ -48,7 +49,8 @@ function App() {
 
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpFrom />} />
-
+          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/setpassword" element={<Setpassword />} />
           {/* student Route */}
           <Route path="/student" element={<Student></Student>}>
             <Route path="dashboard" element={<StudentDashboard />} />

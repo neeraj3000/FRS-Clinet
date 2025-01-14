@@ -347,7 +347,7 @@ const ClassDetails = () => {
                     onClick={() => handleMarkAbsentPresent(student)}
                     sx={{ height: 30, fontSize: "0.9rem" }}
                   >
-                    Mark Present
+                    Consolidate
                   </Button>
                 </CardContent>
               </Card>

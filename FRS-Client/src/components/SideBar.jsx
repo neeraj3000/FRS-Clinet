@@ -18,21 +18,21 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-
-// navbar
 import MoreIcon from "@mui/icons-material/MoreVert";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Badge from "@mui/material/Badge";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-
-// render content
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { Outlet } from "react-router-dom";  // Use Outlet to render child routes
+import { Outlet } from "react-router-dom";
+import Avatar from '@mui/material/Avatar';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import LogoutIcon from '@mui/icons-material/Logout';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PersonIcon from '@mui/icons-material/Person';
 
-
-// import NavBar from './NavBar'
+const PRIMARY_COLOR = '#1976D2';
 const drawerWidthDefault = 240;
 
 const openedMixin = (theme, drawerWidth) => ({
@@ -42,6 +42,9 @@ const openedMixin = (theme, drawerWidth) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: "hidden",
+  backgroundColor: '#fafafa',
+  borderRight: 'none',
+  boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
 });
 
 const closedMixin = (theme) => ({
@@ -50,6 +53,9 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: "hidden",
+  backgroundColor: '#fafafa',
+  borderRight: 'none',
+  boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -61,8 +67,8 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
+  backgroundColor: '#fafafa',
 }));
 
 const AppBar = styled(MuiAppBar, {
@@ -73,6 +79,9 @@ const AppBar = styled(MuiAppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  backgroundColor: PRIMARY_COLOR,
+  boxShadow: 'none',
+  borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -100,6 +109,23 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
+const ProfileSection = styled(Box)(({ theme, open }) => ({
+  position: 'fixed',
+  bottom: 0,
+  width: open ? drawerWidthDefault : `calc(${theme.spacing(7)} + 1px)`,
+  backgroundColor: '#fafafa',
+  borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+  padding: theme.spacing(2),
+  transition: theme.transitions.create('width', {
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
+  }),
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: theme.spacing(2),
+}));
+
 export default function MiniDrawer({
   open,
   handleDrawerOpen,
@@ -107,102 +133,65 @@ export default function MiniDrawer({
   drawerWidth = drawerWidthDefault,
   title = "",
   drawerItems = [],
-  secondaryItems = [] 
+  secondaryItems = []
 }) {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+  const [profileMenuAnchorEl, setProfileMenuAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+  const isProfileMenuOpen = Boolean(profileMenuAnchorEl);
 
   const handleProfileMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
+    setProfileMenuAnchorEl(event.currentTarget);
   };
 
-  const handleMobileMenuClose = () => {
-    setMobileMoreAnchorEl(null);
+  const handleProfileMenuClose = () => {
+    setProfileMenuAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
+  const handleLogout = () => {
+    handleProfileMenuClose();
+    // Add your logout logic here
+    console.log('Logging out...');
   };
 
-  const handleMobileMenuOpen = (event) => {
-    setMobileMoreAnchorEl(event.currentTarget);
-  };
+  // Keep existing menu handlers...
 
-  const menuId = "primary-search-account-menu";
-  const renderMenu = (
+  const profileMenu = (
     <Menu
-      anchorEl={anchorEl}
+      anchorEl={profileMenuAnchorEl}
+      open={isProfileMenuOpen}
+      onClose={handleProfileMenuClose}
       anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
+        vertical: 'top',
+        horizontal: 'right',
       }}
-      id={menuId}
-      keepMounted
       transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
+        vertical: 'bottom',
+        horizontal: 'right',
       }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
-
-  const mobileMenuId = "primary-search-account-menu-mobile";
-  const renderMobileMenu = (
-    <Menu
-      anchorEl={mobileMoreAnchorEl}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      id={mobileMenuId}
-      keepMounted
-      transformOrigin={{
-        vertical: "top",
-        horizontal: "right",
-      }}
-      open={isMobileMenuOpen}
-      onClose={handleMobileMenuClose}
-    >
-      <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
-        </IconButton>
-        <p>Messages</p>
+      <MenuItem onClick={handleProfileMenuClose}>
+        <ListItemIcon>
+          <PersonIcon fontSize="small" />
+        </ListItemIcon>
+        Profile
       </MenuItem>
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
+      <MenuItem onClick={handleProfileMenuClose}>
+        <ListItemIcon>
+          <SettingsIcon fontSize="small" />
+        </ListItemIcon>
+        Settings
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
+      <Divider />
+      <MenuItem onClick={handleLogout}>
+        <ListItemIcon>
+          <LogoutIcon fontSize="small" color="error" />
+        </ListItemIcon>
+        <Typography color="error">Logout</Typography>
       </MenuItem>
     </Menu>
   );
@@ -230,52 +219,19 @@ export default function MiniDrawer({
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton
-              size="large"
-              aria-label="show 4 new mails"
-              color="inherit"
-            >
+            <IconButton size="large" color="inherit">
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show 17 new notifications"
-              color="inherit"
-            >
+            <IconButton size="large" color="inherit">
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
-            <IconButton
-              size="large"
-              edge="end"
-              aria-label="account of current user"
-              aria-controls={menuId}
-              aria-haspopup="true"
-              onClick={handleProfileMenuOpen}
-              color="inherit"
-            >
-              <AccountCircle />
-            </IconButton>
-          </Box>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
-            <IconButton
-              size="large"
-              aria-label="show more"
-              aria-controls={mobileMenuId}
-              aria-haspopup="true"
-              onClick={handleMobileMenuOpen}
-              color="inherit"
-            >
-              <MoreIcon />
-            </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
-      {renderMobileMenu}
-      {renderMenu}
 
       <Drawer variant="permanent" open={open} drawerWidth={drawerWidth}>
         <DrawerHeader>
@@ -287,7 +243,8 @@ export default function MiniDrawer({
             )}
           </IconButton>
         </DrawerHeader>
-        <Divider />
+        <Divider sx={{ borderColor: 'rgba(0, 0, 0, 0.08)' }} />
+        
         <List>
           {drawerItems.map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
@@ -298,24 +255,46 @@ export default function MiniDrawer({
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
+                  borderRadius: '8px',
+                  mx: 1,
+                  '&:hover': {
+                    backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                  },
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(25, 118, 210, 0.08)',
+                    '&:hover': {
+                      backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                    },
+                  },
                 }}
-                onClick={handleDrawerClose} // Close the drawer on item click
+                onClick={handleDrawerClose}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : "auto",
                     justifyContent: "center",
+                    color: PRIMARY_COLOR,
                   }}
                 >
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText 
+                  primary={text} 
+                  sx={{ 
+                    opacity: open ? 1 : 0,
+                    '& .MuiTypography-root': {
+                      fontWeight: 500,
+                    }
+                  }} 
+                />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
-        <Divider />
+        
+        <Divider sx={{ borderColor: 'rgba(0, 0, 0, 0.08)' }} />
+        
         <List>
           {secondaryItems.map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
@@ -324,34 +303,76 @@ export default function MiniDrawer({
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
+                  borderRadius: '8px',
+                  mx: 1,
+                  '&:hover': {
+                    backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                  },
                 }}
-                onClick={handleDrawerClose} // Close the drawer on item click
+                onClick={handleDrawerClose}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
                     mr: open ? 3 : "auto",
                     justifyContent: "center",
+                    color: PRIMARY_COLOR,
                   }}
                 >
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText 
+                  primary={text} 
+                  sx={{ 
+                    opacity: open ? 1 : 0,
+                    '& .MuiTypography-root': {
+                      fontWeight: 500,
+                    }
+                  }} 
+                />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
+
+        {/* Updated Profile Section */}
+        <ProfileSection open={open}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: PRIMARY_COLOR }}>U</Avatar>
+            {open && (
+              <Box sx={{ overflow: 'hidden' }}>
+                <Typography variant="subtitle2" noWrap sx={{ fontWeight: 600 }}>
+                  User Name
+                </Typography>
+                <Typography variant="caption" noWrap sx={{ color: '#666666' }}>
+                  user@example.com
+                </Typography>
+              </Box>
+            )}
+          </Box>
+          {open && (
+            <IconButton
+              size="small"
+              onClick={handleProfileMenuOpen}
+              sx={{ color: '#666666' }}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          )}
+        </ProfileSection>
+        {profileMenu}
       </Drawer>
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: (theme) => theme.palette.background.default,
+          bgcolor: '#ffffff',
           p: 2,
         }}
       >
         <DrawerHeader />
-        <Outlet /> {/* Placeholder for nested routes */}
+        <Outlet />
       </Box>
     </Box>
   );

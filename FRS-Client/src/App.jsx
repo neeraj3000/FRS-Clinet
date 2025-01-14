@@ -40,6 +40,7 @@ import Settings from "./pages/Faculty/settings";
 // import FacultyLayout from "./pages/Faculty/Faculty_Layout";
 import Faculty from "./pages/Faculty/faculty";
 import ClassesList from "./pages/Faculty/ClassesList";
+import MarkAttendance from "./pages/Faculty/MarkAttendance";
 import Registrations from "./pages/admin/Registrations";
 
 function App() {
@@ -89,6 +90,7 @@ function App() {
              <Route path="todayclasses" element={<ClassesList />} />
              <Route path="profile" element={<Profile />} />
              <Route path="settings" element={<Settings />} />
+             <Route path="mark-attendance" element={<MarkAttendance />} />
            </Route>
         </Routes>
       </Router>

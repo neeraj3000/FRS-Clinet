@@ -13,7 +13,10 @@ import StudentVisualisation from "./pages/admin/StudentVisualisation";
 import LoginForm from "./pages/Login";
 import SignUpFrom from "./pages/SignUp"
 import AddStudent from "./pages/adduser"
+import Forgot from "./pages/Forgot";
+import Setpassword from "./pages/Setpassword";
 import StudentForm from "./pages/admin/StudentForm"
+
 
 import ClassList from "./pages/admin/ClassList";
 import ClassDetails from "./pages/admin/ClassDetails";
@@ -50,7 +53,8 @@ function App() {
 
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpFrom />} />
-
+          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/setpassword" element={<Setpassword />} />
           {/* student Route */}
           <Route path="/student" element={<Student></Student>}>
             <Route path="dashboard" element={<StudentDashboard />} />
@@ -70,9 +74,11 @@ function App() {
             <Route path="todayclasses/e2" element={<E2Classes />} />
             <Route path="todayclasses/e3" element={<E3Classes />} />
             <Route path="todayclasses/e4" element={<E4Classes />} /> */}
-            <Route path="registerstudents" element={<StudentForm />} />
-            <Route path="viewstudents" element={<Registrations />} />
+                        <Route path="registerstudents" element={<StudentForm />} />
+                        <Route path="viewstudents" element={<Registrations />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
+            <Route path="managefaculty/:year" element={<ManageFaculty />} />
+
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />
 

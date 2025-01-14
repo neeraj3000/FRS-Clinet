@@ -9,9 +9,7 @@ export default function AdminDashBoard() {
     "View Students",
     "Manage Faculty",
     "Student Visualisation",
-    "all-mail", 
-    "trash",
-    "spam",
+
   ];
 
   const [open, setOpen] = useState(false);  // Keep drawer open by default

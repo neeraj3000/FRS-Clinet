@@ -26,17 +26,13 @@ import {
   Cell,
 } from "recharts";
 import SchoolIcon from "@mui/icons-material/School";
-import HowToRegIcon from "@mui/icons-material/HowToReg";
-import PersonOffIcon from "@mui/icons-material/PersonOff";
+import PercentIcon from "@mui/icons-material/Percent";
 
-// Static data replacing the random data generation
 const staticData = {
   yearlyData: [
     {
       year: "E1",
       totalStudents: 350,
-      presentToday: 300,
-      absentToday: 50,
       averageAttendance: 85.35,
       sections: [
         { section: "A", attendance: 80.56 },
@@ -49,8 +45,6 @@ const staticData = {
     {
       year: "E2",
       totalStudents: 350,
-      presentToday: 280,
-      absentToday: 70,
       averageAttendance: 80.42,
       sections: [
         { section: "A", attendance: 75.56 },
@@ -63,8 +57,6 @@ const staticData = {
     {
       year: "E3",
       totalStudents: 350,
-      presentToday: 290,
-      absentToday: 60,
       averageAttendance: 82.78,
       sections: [
         { section: "A", attendance: 80.45 },
@@ -77,8 +69,6 @@ const staticData = {
     {
       year: "E4",
       totalStudents: 350,
-      presentToday: 320,
-      absentToday: 30,
       averageAttendance: 91.12,
       sections: [
         { section: "A", attendance: 90.45 },
@@ -107,18 +97,16 @@ const AttendanceDashboard = () => {
   const [enteredID, setEnteredID] = useState("");
   const navigate = useNavigate();
 
-  // Function to handle ID input change
   const handleIDChange = (e) => {
     setEnteredID(e.target.value);
   };
 
-  // Function to handle form submission or ID search
   const handleSearch = () => {
-    const cleanedID = enteredID.replace("R", ""); // Remove the letter 'R' from the ID
+    const cleanedID = enteredID.replace("R", "");
     navigate(`/admin/studentvisualisation/${cleanedID}`);
   };
 
-  const StatCard = ({ title, value, icon: Icon, color }) => (
+  const StatCard = ({ title, value, icon: Icon, color, isPercentage }) => (
     <Card elevation={3}>
       <CardContent>
         <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -127,7 +115,7 @@ const AttendanceDashboard = () => {
               {title}
             </Typography>
             <Typography variant="h5" component="div">
-              {value}
+              {isPercentage ? `${value.toFixed(2)}%` : value}
             </Typography>
           </Box>
           <Icon sx={{ fontSize: 40, color }} />
@@ -135,6 +123,7 @@ const AttendanceDashboard = () => {
       </CardContent>
     </Card>
   );
+  
 
   const handleYearClick = (year) => {
     year = year.charAt(0).toLowerCase() + year.slice(1);
@@ -153,16 +142,10 @@ const AttendanceDashboard = () => {
           gap: 1,
         }}
       >
-        <Typography
-          variant="h5"
-          component="h1"
-          fontWeight="bold"
-          color="#1a237e"
-        >
-          Scheduled Classes
+        <Typography variant="h5" component="h1" fontWeight="bold" color="#1a237e">
+          Students Analysis
         </Typography>
 
-        {/* Text Field and Button aligned next to each other */}
         <Box display="flex" gap={1}>
           <TextField
             type="text"
@@ -179,7 +162,7 @@ const AttendanceDashboard = () => {
             label="Enter ID"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                handleSearch(); // Trigger search when Enter is pressed
+                handleSearch();
               }
             }}
           />
@@ -221,25 +204,16 @@ const AttendanceDashboard = () => {
               </Grid>
               <Grid item xs={12}>
                 <StatCard
-                  title="Present Today"
-                  value={yearData.presentToday}
-                  icon={HowToRegIcon}
+                  title="Average Attendance"
+                  value={yearData.averageAttendance}
+                  icon={PercentIcon}
                   color="#2e7d32"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <StatCard
-                  title="Absent Today"
-                  value={yearData.absentToday}
-                  icon={PersonOffIcon}
-                  color="#d32f2f"
                 />
               </Grid>
             </Grid>
           </Grid>
         ))}
 
-        {/* Bar and Line Charts */}
         <Grid item xs={12} md={6}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>

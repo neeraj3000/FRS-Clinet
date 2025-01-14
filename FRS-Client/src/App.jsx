@@ -13,6 +13,7 @@ import StudentVisualisation from "./pages/admin/StudentVisualisation";
 import LoginForm from "./pages/Login";
 import SignUpFrom from "./pages/SignUp"
 import AddStudent from "./pages/adduser"
+import AdminProfile from "./pages/admin/Profile";
 import Forgot from "./pages/Forgot";
 import Setpassword from "./pages/Setpassword";
 import StudentForm from "./pages/admin/StudentForm"
@@ -25,7 +26,7 @@ import StudentAttendaceOverview from "./pages/admin/StudentAttendanceOverview"
 
 import Student from "./pages/student/student";
 import StudentDashboard from "./pages/student/StudentDashboard";
-
+import StudentProfile from "./pages/student/Profile";
 // import E1Classes from "./pages/admin/E1Classes";
 // import E2Classes from "./pages/admin/E2Classes";
 // import E3Classes from "./pages/admin/E3Classes";
@@ -59,6 +60,7 @@ function App() {
           {/* student Route */}
           <Route path="/student" element={<Student></Student>}>
             <Route path="dashboard" element={<StudentDashboard />} />
+            <Route path="profile" element={<StudentProfile />} />
           </Route>
           {/* Admin Routes */}
         
@@ -82,7 +84,7 @@ function App() {
 
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />
-
+            <Route path="profile" element={<AdminProfile />} />
           </Route>
           <Route path="/faculty" element={<Faculty />}>
              <Route index element={<Navigate to="/faculty/dashboard" />} /> 

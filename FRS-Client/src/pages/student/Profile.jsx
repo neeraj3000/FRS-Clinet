@@ -18,33 +18,26 @@ import {
 import {
   Edit as EditIcon,
   Save as SaveIcon,
-  Business as BusinessIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
   LocationOn as LocationOnIcon,
-  Work as WorkIcon,
   CameraAlt as CameraAltIcon,
-  School as SchoolIcon,
   Class as ClassIcon,
+  Business as BusinessIcon,
 } from '@mui/icons-material';
 
 const Profile = () => {
-  const initialFacultyInfo = {
-    name: "Dr. John Doe",
-    facultyId: "FAC2024001",
+  const initialStudentInfo = {
+    name: "John Doe",
+    studentId: "STU2024001",
     department: "Computer Science",
-    email: "john.doe@university.edu",
+    email: "john.doe@student.university.edu",
     phone: "+1 (555) 123-4567",
-    location: "Room 401, Engineering Building",
-    position: "Associate Professor",
-    expertise: "Artificial Intelligence, Machine Learning",
-    education: "Ph.D. in Computer Science",
-    university: "Stanford University",
-    courses: ["Introduction to AI", "Machine Learning Basics", "Advanced Data Science"],
+    class: "E2 - E",
     profileImage: null,
   };
 
-  const [facultyInfo, setFacultyInfo] = useState(initialFacultyInfo);
+  const [studentInfo, setStudentInfo] = useState(initialStudentInfo);
   const [isEditing, setIsEditing] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -52,7 +45,7 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleChange = useCallback((field, value) => {
-    setFacultyInfo((prev) => ({ ...prev, [field]: value }));
+    setStudentInfo((prev) => ({ ...prev, [field]: value }));
   }, []);
 
   const handleImageChange = (event) => {
@@ -60,7 +53,7 @@ const Profile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setFacultyInfo((prev) => ({ ...prev, profileImage: reader.result }));
+        setStudentInfo((prev) => ({ ...prev, profileImage: reader.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -68,7 +61,7 @@ const Profile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    console.log("Updated Faculty Info:", facultyInfo);
+    console.log("Updated Student Info:", studentInfo);
   };
 
   const handleEditToggle = () => {
@@ -132,7 +125,7 @@ const Profile = () => {
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
           <Typography variant="h5" sx={{ color: '#1976d2' }}>
-            Faculty Profile
+            Student Profile
           </Typography>
           <Box>
             <Button
@@ -171,9 +164,9 @@ const Profile = () => {
                 color: '#ffffff',
                 fontSize: 28,
               }}
-              src={facultyInfo.profileImage || undefined}
+              src={studentInfo.profileImage || undefined}
             >
-              {!facultyInfo.profileImage && facultyInfo.name.split(' ').map((n) => n[0]).join('')}
+              {!studentInfo.profileImage && studentInfo.name.split(' ').map((n) => n[0]).join('')}
             </Avatar>
             {isEditing && (
               <IconButton
@@ -203,20 +196,17 @@ const Profile = () => {
                 fullWidth
                 variant="outlined"
                 size="small"
-                value={facultyInfo.name}
+                value={studentInfo.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 sx={{ mb: 1 }}
               />
             ) : (
               <Typography variant="h4" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                {facultyInfo.name}
+                {studentInfo.name}
               </Typography>
             )}
             <Typography variant="subtitle1" color="text.secondary">
-              {facultyInfo.position}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Faculty ID: {facultyInfo.facultyId}
+              Student ID: {studentInfo.studentId}
             </Typography>
           </Box>
         </Box>
@@ -231,60 +221,33 @@ const Profile = () => {
             <InfoItem
               icon={<EmailIcon color="action" />}
               label="Email"
-              value={facultyInfo.email}
+              value={studentInfo.email}
               field="email"
             />
             <InfoItem
               icon={<PhoneIcon color="action" />}
               label="Phone"
-              value={facultyInfo.phone}
+              value={studentInfo.phone}
               field="phone"
-            />
-            <InfoItem
-              icon={<LocationOnIcon color="action" />}
-              label="Office"
-              value={facultyInfo.location}
-              field="location"
             />
           </Grid>
 
-          <          Grid item xs={12} md={6}>
+          <Grid item xs={12} md={6}>
             <Typography variant="h6" gutterBottom sx={{ color: '#1976d2' }}>
               Academic Information
             </Typography>
             <InfoItem
               icon={<BusinessIcon color="action" />}
               label="Department"
-              value={facultyInfo.department}
+              value={studentInfo.department}
               field="department"
             />
             <InfoItem
-              icon={<SchoolIcon color="action" />}
-              label="Education"
-              value={facultyInfo.education}
-              field="education"
+              icon={<ClassIcon color="action" />}
+              label="Class"
+              value={studentInfo.class}
+              field="class"
             />
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <ClassIcon color="action" />
-              <Box sx={{ ml: 2, flex: 1 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}>
-                  Courses
-                </Typography>
-                {isEditing ? (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    value={facultyInfo.courses.join(', ')}
-                    onChange={(e) =>
-                      handleChange('courses', e.target.value.split(',').map((course) => course.trim()))
-                    }
-                  />
-                ) : (
-                  <Typography variant="body1">{facultyInfo.courses.join(', ')}</Typography>
-                )}
-              </Box>
-            </Box>
           </Grid>
         </Grid>
 
@@ -337,4 +300,3 @@ const Profile = () => {
 };
 
 export default Profile;
-

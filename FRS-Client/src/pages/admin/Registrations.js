@@ -56,7 +56,7 @@ function Registrations() {
           <IconButton edge="start" color="inherit" onClick={() => navigate(-1)} aria-label="back">
             <ArrowBackIcon />
           </IconButton>
-          <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>Student Registrations</Typography>
+          <Typography variant="h6" sx={{ ml: 1, flexGrow: 1 }}>View Students</Typography>
         </Toolbar>
       </AppBar>
 

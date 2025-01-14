@@ -90,7 +90,7 @@ const ForgotPassword = () => {
 
           {/* Back to Login Link */}
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Link href="/login" variant="body2">
+            <Link href="/" variant="body2">
               Back to Login
             </Link>
           </Box>

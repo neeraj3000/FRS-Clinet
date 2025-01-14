@@ -6,6 +6,7 @@ export default function AdminDashBoard() {
     "Dashboard",
     "Today Classes",
     "Register Students",
+    "View Students",
     "Manage Faculty",
     "Student Visualisation",
     "all-mail", 

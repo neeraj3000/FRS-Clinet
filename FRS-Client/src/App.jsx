@@ -37,6 +37,7 @@ import Settings from "./pages/Faculty/settings";
 // import FacultyLayout from "./pages/Faculty/Faculty_Layout";
 import Faculty from "./pages/Faculty/faculty";
 import ClassesList from "./pages/Faculty/ClassesList";
+import Registrations from "./pages/admin/Registrations";
 
 function App() {
   return (
@@ -70,6 +71,7 @@ function App() {
             <Route path="todayclasses/e3" element={<E3Classes />} />
             <Route path="todayclasses/e4" element={<E4Classes />} /> */}
             <Route path="registerstudents" element={<StudentForm />} />
+            <Route path="viewstudents" element={<Registrations />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />

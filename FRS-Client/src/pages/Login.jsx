@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Radio, RadioGroup, FormControlLabel, Typography, Box, Link } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Link as RouterLink } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const validationSchema = yup.object({
   email: yup.string().email('Invalid email').required('Email is required'),
@@ -11,6 +11,7 @@ const validationSchema = yup.object({
 });
 
 const Login = () => {
+  const navigate = useNavigate(); // Initialize useNavigate hook
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -22,6 +23,14 @@ const Login = () => {
     onSubmit: (values) => {
       console.log(values);
       // Handle login logic here
+      // After successful login, redirect based on selected role
+      if (values.role === 'student') {
+        navigate('/student'); // Redirect to /student
+      } else if (values.role === 'faculty') {
+        navigate('/faculty'); // Redirect to /faculty
+      } else if (values.role === 'admin') {
+        navigate('/admin'); // Redirect to /admin
+      }
     }
   });
 

@@ -15,6 +15,9 @@ import SignUpFrom from "./pages/SignUp"
 import AddStudent from "./pages/adduser"
 import Forgot from "./pages/Forgot";
 import Setpassword from "./pages/Setpassword";
+import StudentForm from "./pages/admin/StudentForm"
+
+
 import ClassList from "./pages/admin/ClassList";
 import ClassDetails from "./pages/admin/ClassDetails";
 
@@ -38,6 +41,7 @@ import Settings from "./pages/Faculty/settings";
 import Faculty from "./pages/Faculty/faculty";
 import ClassesList from "./pages/Faculty/ClassesList";
 import MarkAttendance from "./pages/Faculty/MarkAttendance";
+import Registrations from "./pages/admin/Registrations";
 
 function App() {
   return (
@@ -48,7 +52,7 @@ function App() {
           {/* Login Route */}
           <Route path="/addstudent" element={<AddStudent />} />
 
-          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpFrom />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/setpassword" element={<Setpassword />} />
@@ -66,7 +70,13 @@ function App() {
             <Route path="todayclasses/:year" element={<ManageClasses />} />
             {/* <Route path="todayclasses/:year" element={<ClassList />} />  */}
             <Route path="todayclasses/:year/:classId" element={<ClassDetails />} /> {/* Use element instead of component */}
-
+            {/* Uncomment and adjust these routes as needed */}
+            {/* <Route path="todayclasses/e1" element={<E1Classes />} />
+            <Route path="todayclasses/e2" element={<E2Classes />} />
+            <Route path="todayclasses/e3" element={<E3Classes />} />
+            <Route path="todayclasses/e4" element={<E4Classes />} /> */}
+                        <Route path="registerstudents" element={<StudentForm />} />
+                        <Route path="viewstudents" element={<Registrations />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
             <Route path="managefaculty/:year" element={<ManageFaculty />} />
 

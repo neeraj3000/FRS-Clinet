@@ -5,6 +5,7 @@ export default function AdminDashBoard() {
   const drawerItems = [
     "Dashboard",
     "Today Classes",
+    "Register Students",
     "Manage Faculty",
     "Student Visualisation",
     "all-mail", 

@@ -13,6 +13,7 @@ import StudentVisualisation from "./pages/admin/StudentVisualisation";
 import LoginForm from "./pages/Login";
 import SignUpFrom from "./pages/SignUp"
 import AddStudent from "./pages/adduser"
+import StudentForm from "./pages/admin/StudentForm"
 
 import ClassList from "./pages/admin/ClassList";
 import ClassDetails from "./pages/admin/ClassDetails";
@@ -68,6 +69,7 @@ function App() {
             <Route path="todayclasses/e2" element={<E2Classes />} />
             <Route path="todayclasses/e3" element={<E3Classes />} />
             <Route path="todayclasses/e4" element={<E4Classes />} /> */}
+            <Route path="registerstudents" element={<StudentForm />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />

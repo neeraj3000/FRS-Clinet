@@ -131,21 +131,21 @@ const Profile = () => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-          <Typography variant="h5" sx={{ color: '#1976d2' }}>
+          <Typography variant="h5" sx={{ color: '#1a237e' }}>
             Faculty Profile
           </Typography>
           <Box>
             <Button
               startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
               variant="outlined"
-              sx={{ color: '#1976d2', borderColor: '#1976d2', mr: 2 }}
+              sx={{ color: '#1a237e', borderColor: '#1a237e', mr: 2 }}
               onClick={isEditing ? handleSave : handleEditToggle}
             >
               {isEditing ? "Save Profile" : "Edit Profile"}
             </Button>
             <Button
               variant="outlined"
-              sx={{ color: '#1976d2', borderColor: '#1976d2' }}
+              sx={{ color: '#1a237e', borderColor: '#1a237e' }}
               onClick={() => setPasswordDialogOpen(true)}
             >
               Change Password
@@ -167,7 +167,7 @@ const Profile = () => {
               sx={{
                 width: 120,
                 height: 120,
-                backgroundColor: '#1976d2',
+                backgroundColor: '#1a237e',
                 color: '#ffffff',
                 fontSize: 28,
               }}
@@ -187,7 +187,7 @@ const Profile = () => {
                   borderRadius: '50%',
                 }}
               >
-                <CameraAltIcon sx={{ color: '#1976d2' }} />
+                <CameraAltIcon sx={{ color: '#1a237e' }} />
                 <input
                   type="file"
                   hidden
@@ -208,7 +208,7 @@ const Profile = () => {
                 sx={{ mb: 1 }}
               />
             ) : (
-              <Typography variant="h4" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
+              <Typography variant="h4" sx={{ color: '#1a237e', fontWeight: 'bold' }}>
                 {facultyInfo.name}
               </Typography>
             )}
@@ -225,7 +225,7 @@ const Profile = () => {
 
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#1976d2' }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
               Contact Information
             </Typography>
             <InfoItem
@@ -249,7 +249,7 @@ const Profile = () => {
           </Grid>
 
           <          Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#1976d2' }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
               Academic Information
             </Typography>
             <InfoItem

@@ -9,7 +9,7 @@ const ProgressIndicator = ({ totalClasses, attendedClasses }) => {
   const theme = useTheme(); // Access the Material-UI theme for breakpoints
 
   const getColor = (percentage) => {
-    return percentage >= 75 ? "#4caf50" : "#f44336"; // Green if 75% or more, otherwise red
+    return percentage >= 75 ? "#1a237e" : "#f44336"; // Green if 75% or more, otherwise red
   };
 
   // Define sizes for the circle and padding based on screen size

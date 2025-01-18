@@ -29,9 +29,9 @@ import {
 } from '@mui/icons-material';
 
 const Profile = () => {
-  const initialFacultyInfo = {
+  const initialAdminInfo = {
     name: "Dr. John Doe",
-    facultyId: "FAC2024001",
+    AdminId: "FAC2024001",
     department: "Computer Science",
     email: "john.doe@university.edu",
     phone: "+1 (555) 123-4567",
@@ -44,7 +44,7 @@ const Profile = () => {
     profileImage: null,
   };
 
-  const [facultyInfo, setFacultyInfo] = useState(initialFacultyInfo);
+  const [adminInfo, setAdminInfo] = useState(initialAdminInfo);
   const [isEditing, setIsEditing] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -52,7 +52,7 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleChange = useCallback((field, value) => {
-    setFacultyInfo((prev) => ({ ...prev, [field]: value }));
+    setAdminInfo((prev) => ({ ...prev, [field]: value }));
   }, []);
 
   const handleImageChange = (event) => {
@@ -60,7 +60,7 @@ const Profile = () => {
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        setFacultyInfo((prev) => ({ ...prev, profileImage: reader.result }));
+        setAdminInfo((prev) => ({ ...prev, profileImage: reader.result }));
       };
       reader.readAsDataURL(file);
     }
@@ -68,7 +68,7 @@ const Profile = () => {
 
   const handleSave = () => {
     setIsEditing(false);
-    console.log("Updated Faculty Info:", facultyInfo);
+    console.log("Updated Admin Info:", adminInfo);
   };
 
   const handleEditToggle = () => {
@@ -131,21 +131,21 @@ const Profile = () => {
         }}
       >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-          <Typography variant="h5" sx={{ color: '#1976d2' }}>
-            Faculty Profile
+          <Typography variant="h5" sx={{ color: '#1a237e' }}>
+            Admin Profile
           </Typography>
           <Box>
             <Button
               startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
               variant="outlined"
-              sx={{ color: '#1976d2', borderColor: '#1976d2', mr: 2 }}
+              sx={{ color: '#1a237e', borderColor: '#1a237e', mr: 2 }}
               onClick={isEditing ? handleSave : handleEditToggle}
             >
               {isEditing ? "Save Profile" : "Edit Profile"}
             </Button>
             <Button
               variant="outlined"
-              sx={{ color: '#1976d2', borderColor: '#1976d2' }}
+              sx={{ color: '#1a237e', borderColor: '#1a237e' }}
               onClick={() => setPasswordDialogOpen(true)}
             >
               Change Password
@@ -167,13 +167,13 @@ const Profile = () => {
               sx={{
                 width: 120,
                 height: 120,
-                backgroundColor: '#1976d2',
+                backgroundColor: '#1a237e',
                 color: '#ffffff',
                 fontSize: 28,
               }}
-              src={facultyInfo.profileImage || undefined}
+              src={adminInfo.profileImage || undefined}
             >
-              {!facultyInfo.profileImage && facultyInfo.name.split(' ').map((n) => n[0]).join('')}
+              {!adminInfo.profileImage && adminInfo.name.split(' ').map((n) => n[0]).join('')}
             </Avatar>
             {isEditing && (
               <IconButton
@@ -187,7 +187,7 @@ const Profile = () => {
                   borderRadius: '50%',
                 }}
               >
-                <CameraAltIcon sx={{ color: '#1976d2' }} />
+                <CameraAltIcon sx={{ color: '#1a237e' }} />
                 <input
                   type="file"
                   hidden
@@ -203,20 +203,20 @@ const Profile = () => {
                 fullWidth
                 variant="outlined"
                 size="small"
-                value={facultyInfo.name}
+                value={adminInfo.name}
                 onChange={(e) => handleChange('name', e.target.value)}
                 sx={{ mb: 1 }}
               />
             ) : (
-              <Typography variant="h4" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-                {facultyInfo.name}
+              <Typography variant="h4" sx={{ color: '#1a237e', fontWeight: 'bold' }}>
+                {adminInfo.name}
               </Typography>
             )}
             <Typography variant="subtitle1" color="text.secondary">
-              {facultyInfo.position}
+              {adminInfo.position}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Faculty ID: {facultyInfo.facultyId}
+              Admin ID: {adminInfo.AdminId}
             </Typography>
           </Box>
         </Box>
@@ -225,43 +225,43 @@ const Profile = () => {
 
         <Grid container spacing={4}>
           <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#1976d2' }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
               Contact Information
             </Typography>
             <InfoItem
               icon={<EmailIcon color="action" />}
               label="Email"
-              value={facultyInfo.email}
+              value={adminInfo.email}
               field="email"
             />
             <InfoItem
               icon={<PhoneIcon color="action" />}
               label="Phone"
-              value={facultyInfo.phone}
+              value={adminInfo.phone}
               field="phone"
             />
             <InfoItem
               icon={<LocationOnIcon color="action" />}
               label="Office"
-              value={facultyInfo.location}
+              value={adminInfo.location}
               field="location"
             />
           </Grid>
 
           <          Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#1976d2' }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
               Academic Information
             </Typography>
             <InfoItem
               icon={<BusinessIcon color="action" />}
               label="Department"
-              value={facultyInfo.department}
+              value={adminInfo.department}
               field="department"
             />
             <InfoItem
               icon={<SchoolIcon color="action" />}
               label="Education"
-              value={facultyInfo.education}
+              value={adminInfo.education}
               field="education"
             />
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -275,13 +275,13 @@ const Profile = () => {
                     fullWidth
                     variant="outlined"
                     size="small"
-                    value={facultyInfo.courses.join(', ')}
+                    value={adminInfo.courses.join(', ')}
                     onChange={(e) =>
                       handleChange('courses', e.target.value.split(',').map((course) => course.trim()))
                     }
                   />
                 ) : (
-                  <Typography variant="body1">{facultyInfo.courses.join(', ')}</Typography>
+                  <Typography variant="body1">{adminInfo.courses.join(', ')}</Typography>
                 )}
               </Box>
             </Box>

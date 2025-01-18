@@ -14,6 +14,10 @@ import LoginForm from "./pages/Login";
 import SignUpFrom from "./pages/SignUp"
 import AddStudent from "./pages/adduser"
 import AdminProfile from "./pages/admin/Profile";
+import Forgot from "./pages/Forgot";
+import Setpassword from "./pages/Setpassword";
+import StudentForm from "./pages/admin/StudentForm"
+
 
 import ClassList from "./pages/admin/ClassList";
 import ClassDetails from "./pages/admin/ClassDetails";
@@ -37,7 +41,10 @@ import Settings from "./pages/Faculty/settings";
 // import FacultyLayout from "./pages/Faculty/Faculty_Layout";
 import Faculty from "./pages/Faculty/faculty";
 import ClassesList from "./pages/Faculty/ClassesList";
-
+import MarkAttendance from "./pages/Faculty/MarkAttendance";
+import Registrations from "./pages/admin/Registrations";
+import Facultyauth from "./pages/Faculty/faculty_authentication";
+import Facultyotp from "./pages/Faculty/faculty_otp";
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -47,9 +54,10 @@ function App() {
           {/* Login Route */}
           <Route path="/addstudent" element={<AddStudent />} />
 
-          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpFrom />} />
-
+          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/setpassword" element={<Setpassword />} />
           {/* student Route */}
           <Route path="/student" element={<Student></Student>}>
             <Route path="dashboard" element={<StudentDashboard />} />
@@ -70,7 +78,11 @@ function App() {
             <Route path="todayclasses/e2" element={<E2Classes />} />
             <Route path="todayclasses/e3" element={<E3Classes />} />
             <Route path="todayclasses/e4" element={<E4Classes />} /> */}
+                        <Route path="registerstudents" element={<StudentForm />} />
+                        <Route path="viewstudents" element={<Registrations />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
+            <Route path="managefaculty/:year" element={<ManageFaculty />} />
+
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />
             <Route path="profile" element={<AdminProfile />} />
@@ -79,8 +91,14 @@ function App() {
              <Route index element={<Navigate to="/faculty/dashboard" />} /> 
              <Route path="dashboard" element={<Dashboard />} />
              <Route path="todayclasses" element={<ClassesList />} />
+             <Route path="todayclasses/:year" element={<ClassesList />} />
+             <Route path="todayclasses/:year/facultyauth/:Id" element={<Facultyauth />} />
+             <Route path="todayclasses/:year/facultyauth/:Id/facultyotp" element={<Facultyotp />} />
+             <Route path="todayclasses/:year/facultyauth/:Id/facultyotp/markattendance/:id" element={<MarkAttendance />} />
              <Route path="profile" element={<Profile />} />
              <Route path="settings" element={<Settings />} />
+             
+
            </Route>
         </Routes>
       </Router>

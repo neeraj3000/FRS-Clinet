@@ -16,9 +16,9 @@ const MonthCalendar = ({ currentDate, attendanceData }) => {
     const attendance = attendanceData[dateStr];
     
     if (!attendance) return '#f5f5f5';
-    if (attendance === 'present') return 'rgba(76, 175, 80, 0.4)'; // Darker green
-    if (attendance === 'absent') return 'rgba(239, 83, 80, 0.4)'; // Darker red
-    return 'rgba(255, 183, 77, 0.4)'; // Darker yellow
+    if (attendance === 'present') return 'rgba(26, 35, 126, 0.7)'; // Darker green
+    if (attendance === 'absent') return 'rgba(255, 38, 36, 0.6)'; // Darker red
+    return 'rgba(255,255,255, 1)'; // Darker yellow
   };
 
   const { startingDay, totalDays } = getMonthData();
@@ -80,7 +80,7 @@ const AttendanceCalendar = ({ attendanceData }) => {
         <IconButton onClick={handlePreviousMonths} size="small">
           <ChevronLeft />
         </IconButton>
-        <Typography variant="h6">Attendance Calendar</Typography>
+        <Typography variant="h6" sx={{ color: "#1a237e", fontSize: "1.5rem", fontWeight: 600  }} >Attendance Calendar</Typography>
         <IconButton onClick={handleNextMonths} size="small">
           <ChevronRight />
         </IconButton>
@@ -99,9 +99,9 @@ const AttendanceCalendar = ({ attendanceData }) => {
 
       <Box sx={{ mt: 2, display: 'flex', gap: 2, justifyContent: 'center' }}>
         {[
-          { color: 'rgba(76, 175, 80, 0.4)', label: 'Present' },  // Darker green
-          { color: 'rgba(239, 83, 80, 0.4)', label: 'Absent' },   // Darker red
-          { color: 'rgba(255, 183, 77, 0.4)', label: 'Partial/Late' }  // Darker yellow
+          { color: 'rgba(26, 35, 126, 0.7)', label: 'Present' },  // Darker green
+          { color: 'rgba(255, 38, 36, 0.6)', label: 'Absent' },   // Darker red
+          { color: 'rgb(238, 229, 229)', label: 'Partial/Late' }  // Darker yellow
         ].map(({ color, label }) => (
           <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Box sx={{ width: 12, height: 12, backgroundColor: color, borderRadius: 0.5 }} />

@@ -1,5 +1,7 @@
 import React from "react";
 import AttendanceChart from "../../components/StudentDashboard/AttendanceChart";
+import AttendanceBarChart from "../../components/StudentDashboard/AttendanceBarChart";
+
 import ProgressIndicator from "../../components/StudentDashboard/ProgressIndicator";
 import SubjectCard from "../../components/StudentDashboard/SubjectCard";
 import { Box, Grid, Typography, Paper, Card, CardContent, Avatar, Divider , IconButton } from "@mui/material";
@@ -30,7 +32,7 @@ const StudentDashboard = () => {
     { name: "Physics", total: 30, attended: 25, absent: 5 }, 
     { name: "IT", total: 30, attended: 28, absent: 2 },
     { name: "Biology", total: 30, attended: 26, absent: 4 },
-    { name: "History", total: 30, attended: 19, absent: 11 },
+    { name: "History", total: 30, attended: 22, absent: 8 },
     { name: "English", total: 30, attended: 4, absent: 26 },
   ];
 
@@ -174,7 +176,7 @@ const StudentDashboard = () => {
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1.5 }}>
       <Icon sx={{ color: '#6b7280' }} />
       <Box>
-        <Typography variant="caption" sx={{fontSize:"1rem", color: '#9ca3af', display: 'block' }}>
+        <Typography variant="caption" sx={{fontSize:"1.3rem", color: '#1a237e' , display: 'block' }}>
           {label}
         </Typography>
         <Typography variant="body2" sx={{ color: '#4b5563', fontSize: '1rem' }}>
@@ -286,14 +288,14 @@ const StudentDashboard = () => {
               </Grid>
               <Grid item xs={12} md={4}>
                 <ProfileDetail 
-                  icon={EmailIcon} 
-                  label="Email"
-                  value="john.doe@university.edu"
-                />
-                <ProfileDetail 
                   icon={PhoneIcon} 
                   label="Phone"
                   value="+1 234 567 8900"
+                />
+                <ProfileDetail 
+                  icon={EmailIcon} 
+                  label="Email"
+                  value="john.doe@university.edu"
                 />
               </Grid>
             </Grid>
@@ -302,8 +304,22 @@ const StudentDashboard = () => {
       </Card>
 
       <Grid container spacing={3}>
+      <Grid item xs={12} md={8}>
+        <Paper
+          elevation={3}
+          sx={{
+            padding: { xs: 2, sm: 3 },
+            borderRadius: 2,
+            height: { xs: "auto", sm: "100%" },
+            background: "white",
+          }}
+        >
+          <AttendanceBarChart subjects={subjects} />
+        </Paper>
+      </Grid>
+
         {/* Left Section: Attendance Chart */}
-        <Grid item xs={12} md={8}>
+        {/* <Grid item xs={12} md={8}>
           <Paper
             elevation={3}
             sx={{
@@ -315,14 +331,14 @@ const StudentDashboard = () => {
           >
             <AttendanceChart data={monthlyData} filter="monthly" />
           </Paper>
-        </Grid>
-
+        </Grid> */}
+{/* ,.................................................................................... */}
         {/* Right Section: Progress Indicator */}
         <Grid item xs={12} md={4}>
           <Paper
             elevation={3}
             sx={{
-              background: "linear-gradient(135deg, #c3f18e 0%, #a7e663 100%)",
+              // background: "linear-gradient(135deg, #c3f18e 0%, #a7e663 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

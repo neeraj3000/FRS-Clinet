@@ -14,10 +14,10 @@ const SubjectCard = ({
 
   // Dynamic color based on percentage
   const getColor = (percentage) => {
-    if (percentage > 90) return "#6a0dad"; // Purple
-    if (percentage >= 75) return "#32CD32"; // Green
-    if (percentage >= 50) return "#FFD700"; // Dark Yellow
-    return "#FF4500"; // Red
+    // if (percentage > 90) return "#6a0dad"; // Purple
+    if (percentage >= 75) return '#1a237e';     //"#32CD32"; // Green
+    if (percentage >= 70) return '#2196f3';//"#FFD700"; // Dark Yellow
+    return "#ff2624"; // Red
   };
 
   // Determine screen size (responsive logic)
@@ -29,11 +29,17 @@ const SubjectCard = ({
       display: "flex",
       alignItems: "center",
       justifyContent: "space-between",
-      backgroundColor: "rgba(142, 213, 241, 0.5)", // Light background
+      backgroundColor: "rgba(255, 255, 255, 0.5)", // Light background
       padding: isSmallScreen ? "8px" : "20px",
       borderRadius: "10px",
       boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
       marginBottom: "0px",
+      transition: "transform 0.2s ease, background-color 0.3s ease",
+      cursor: "pointer", // Change cursor to pointer
+      "&:hover": {
+        backgroundColor: "#e3f2fd", // Light blue on hover
+        transform: "scale(1.05)", // Slight zoom on hover
+      },
       ...(isSmallScreen ? smallScreenStyles.container : largeScreenStyles.container),
     },
     subjectTitle: {
@@ -66,7 +72,10 @@ const SubjectCard = ({
     <div style={mergedStyles.container}>
       {/* Left Section: Subject Details */}
       <div style={{ flex: 1, paddingRight: isSmallScreen ? "8px" : "16px" }}>
-        <h3 style={mergedStyles.subjectTitle}>{subject}</h3>
+        
+        {/* <h3 style={mergedStyles.subjectTitle}>{subject}</h3> */}
+        <h3 style={{ ...mergedStyles.subjectTitle, color: '#1a237e' }}>{subject}</h3>
+
         <table style={{ width: "100%" }}>
           <tbody>
             <tr>

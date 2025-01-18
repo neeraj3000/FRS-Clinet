@@ -34,7 +34,7 @@ const Settings = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '100vh',
+        height: '87vh',
         backgroundColor: '#f5f5f5', // Subtle background color
         p: 2,
       }}
@@ -44,6 +44,7 @@ const Settings = () => {
           p: 3,
           maxWidth: 600,
           width: '100%',
+          height: '50vh',
           boxShadow: 3,
           borderRadius: 2,
         }}

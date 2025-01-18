@@ -43,7 +43,8 @@ import Faculty from "./pages/Faculty/faculty";
 import ClassesList from "./pages/Faculty/ClassesList";
 import MarkAttendance from "./pages/Faculty/MarkAttendance";
 import Registrations from "./pages/admin/Registrations";
-
+import Facultyauth from "./pages/Faculty/faculty_authentication";
+import Facultyotp from "./pages/Faculty/faculty_otp";
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -90,9 +91,14 @@ function App() {
              <Route index element={<Navigate to="/faculty/dashboard" />} /> 
              <Route path="dashboard" element={<Dashboard />} />
              <Route path="todayclasses" element={<ClassesList />} />
+             <Route path="todayclasses/:year" element={<ClassesList />} />
+             <Route path="todayclasses/:year/facultyauth/:Id" element={<Facultyauth />} />
+             <Route path="todayclasses/:year/facultyauth/:Id/facultyotp" element={<Facultyotp />} />
+             <Route path="todayclasses/:year/facultyauth/:Id/facultyotp/markattendance/:id" element={<MarkAttendance />} />
              <Route path="profile" element={<Profile />} />
              <Route path="settings" element={<Settings />} />
-             <Route path="mark-attendance" element={<MarkAttendance />} />
+             
+
            </Route>
         </Routes>
       </Router>

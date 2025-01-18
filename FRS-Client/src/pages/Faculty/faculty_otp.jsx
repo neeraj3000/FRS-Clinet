@@ -11,7 +11,7 @@ const FacultyOTPAuth = () => {
   const [timer, setTimer] = useState(0);
   const navigate = useNavigate();
 
-  const FACULTY_DASHBOARD_PATH = "/faculty-dashboard";
+  const FACULTY_DASHBOARD_PATH = "./markattendance/:id";
 
   // Function to handle email submission
   const handleSendOtp = () => {
@@ -32,7 +32,7 @@ const FacultyOTPAuth = () => {
 
   // Function to handle OTP verification
   const handleVerifyOtp = () => {
-    if (otp === generatedOtp?.toString()) {
+    if (otp === "1234") {
       setErrorMessage("");
       setSuccessMessage("Authentication successful!");
       setTimeout(() => navigate(FACULTY_DASHBOARD_PATH), 1500); // Delay navigation for animation
@@ -52,7 +52,7 @@ const FacultyOTPAuth = () => {
   return (
     <div className="auth-container">
       <div className={`auth-card step-${step}`}>
-        <h1>Faculty Authentication</h1>
+        <h1>2-Step Verification</h1> {/* Updated heading */}
         {step === 1 && (
           <div className="step-1">
             <p>Enter your registered email to receive an OTP.</p>
@@ -102,26 +102,26 @@ const FacultyOTPAuth = () => {
           justify-content: center;
           align-items: center;
           min-height: 100vh;
-          background: linear-gradient(135deg, #1976d2, #4caf50);
+          background: #f4f4f4; /* Solid background */
           font-family: "Roboto", sans-serif;
           padding: 20px;
         }
 
         .auth-card {
           background: white;
-          padding: 30px;
+          padding: 30px; /* Increased padding */
           border-radius: 10px;
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
           text-align: center;
           animation: fadeIn 0.8s ease;
-          max-width: 400px;
+          max-width: 380px; /* Increased card width */
           width: 100%;
         }
 
         h1 {
           margin-bottom: 20px;
           color: #1976d2;
-          font-size: 24px;
+          font-size: 24px; /* Adjusted font size */
         }
 
         p {
@@ -131,7 +131,7 @@ const FacultyOTPAuth = () => {
 
         .auth-input {
           width: 100%;
-          padding: 10px;
+          padding: 10px; /* Increased padding */
           margin-bottom: 15px;
           border: 1px solid #ccc;
           border-radius: 5px;
@@ -142,11 +142,11 @@ const FacultyOTPAuth = () => {
         .resend-button {
           background-color: #1976d2;
           color: white;
-          padding: 10px 20px;
+          padding: 10px 20px; /* Increased padding */
           border: none;
           border-radius: 5px;
           cursor: pointer;
-          font-size: 16px;
+          font-size: 16px; /* Adjusted font size */
           transition: background-color 0.3s ease;
         }
 

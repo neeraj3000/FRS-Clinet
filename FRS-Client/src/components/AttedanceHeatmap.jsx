@@ -15,12 +15,14 @@ const MonthCalendar = ({ currentDate, attendanceData, selectedSubject }) => {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
     const dayAttendance = attendanceData[dateStr];
     
+
     if (!dayAttendance || !dayAttendance[selectedSubject]) return '#f5f5f5';
     
     const status = dayAttendance[selectedSubject];
     if (status === 'present') return 'rgba(76, 175, 80, 0.4)';
     if (status === 'absent') return 'rgba(239, 83, 80, 0.4)';
     return 'rgba(255, 183, 77, 0.4)';
+
   };
 
   const { startingDay, totalDays } = getMonthData();
@@ -99,29 +101,17 @@ const AttendanceCalendar = ({ attendanceData }) => {
 
   return (
     <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
-      {/* <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>Attendance Calendar</Typography> */}
-      
-      <Box sx={{ display: 'flex', gap: 3 }}>
-        {/* Side Navigation */}
-        <Box sx={{ 
-          width: '200px', 
-          borderRight: '1px solid #e0e0e0',
-          pr: 2
-        }}>
-          <Typography variant="subtitle2" sx={{ mb: 1 }}>Select Subject</Typography>
-          <FormControl fullWidth size="small">
-            <Select
-              value={selectedSubject}
-              onChange={handleSubjectChange}
-              displayEmpty
-            >
-              {subjects.map((subject) => (
-                <MenuItem key={subject} value={subject}>
-                  {subject}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+        <IconButton onClick={handlePreviousMonths} size="small">
+          <ChevronLeft />
+        </IconButton>
+        <Typography variant="h6" sx={{ color: "#1a237e", fontSize: "1.5rem", fontWeight: 600  }} >Attendance Calendar</Typography>
+        <IconButton onClick={handleNextMonths} size="small">
+          <ChevronRight />
+        </IconButton>
+      </Box>
+
 
           <Box sx={{ mt: 3 }}>
             <Typography variant="subtitle2" sx={{ mb: 1 }}>Legend</Typography>
@@ -138,6 +128,7 @@ const AttendanceCalendar = ({ attendanceData }) => {
           </Box>
         </Box>
 
+
         {/* Calendar Section */}
         <Box sx={{ flex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
@@ -150,6 +141,7 @@ const AttendanceCalendar = ({ attendanceData }) => {
             <IconButton onClick={handleNextMonths} size="small">
               <ChevronRight />
             </IconButton>
+
           </Box>
 
           <Grid container spacing={2}>

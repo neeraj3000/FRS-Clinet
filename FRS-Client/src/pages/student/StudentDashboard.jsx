@@ -1,5 +1,7 @@
 import React from "react";
 import AttendanceChart from "../../components/StudentDashboard/AttendanceChart";
+import AttendanceBarChart from "../../components/StudentDashboard/AttendanceBarChart";
+
 import ProgressIndicator from "../../components/StudentDashboard/ProgressIndicator";
 import SubjectCard from "../../components/StudentDashboard/SubjectCard";
 import { Box, Grid, Typography, Paper, Card, CardContent, Avatar, Divider } from "@mui/material";
@@ -22,7 +24,7 @@ const StudentDashboard = () => {
     { name: "Physics", total: 30, attended: 25, absent: 5 },
     { name: "IT", total: 30, attended: 28, absent: 2 },
     { name: "Biology", total: 30, attended: 26, absent: 4 },
-    { name: "History", total: 30, attended: 19, absent: 11 },
+    { name: "History", total: 30, attended: 22, absent: 8 },
     { name: "English", total: 30, attended: 4, absent: 26 },
   ];
 
@@ -44,7 +46,7 @@ const StudentDashboard = () => {
     <Box sx={{
       padding: { xs: 2, sm: 4 },
       minHeight: "100vh",
-      backgroundColor: "#f5f5f5"
+      // backgroundColor: "#f5f5f5"
     }}>
       <Typography
         variant="h3"
@@ -138,7 +140,7 @@ const StudentDashboard = () => {
 
       <Grid container spacing={3}>
         {/* Left Section: Attendance Chart */}
-        <Grid item xs={12} md={8}>
+        {/* <Grid item xs={12} md={8}>
           <Paper
             elevation={3}
             sx={{
@@ -150,6 +152,19 @@ const StudentDashboard = () => {
           >
             <AttendanceChart data={monthlyData} filter="monthly" />
           </Paper>
+        </Grid> */}
+        <Grid item xs={12} md={8}>
+          <Paper
+            elevation={3}
+            sx={{
+              padding: { xs: 2, sm: 3 },
+              borderRadius: 2,
+              height: { xs: "auto", sm: "100%" },
+              background: "white",
+            }}
+          >
+            <AttendanceBarChart subjects={subjects} />
+          </Paper>
         </Grid>
 
         {/* Right Section: Progress Indicator */}
@@ -157,7 +172,7 @@ const StudentDashboard = () => {
           <Paper
             elevation={3}
             sx={{
-              background: "linear-gradient(135deg, #c3f18e 0%, #a7e663 100%)",
+              // background: "linear-gradient(135deg, #c3f18e 0%, #a7e663 100%)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

@@ -32,7 +32,7 @@ function App() {
         <Routes>
         login_and_student_Dashboard
           {/* Login Route */}
-          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm />} />
           {/* student Route */}
           <Route path="/studentDashboard" element={<StudentDashboard />} />
           {/* Admin Routes */}

@@ -21,10 +21,32 @@ const FacultyAuth = () => {
     }
   }, [capturedImage, errorMessage]);
 
-  const captureImage = () => {
+  const captureImage = async () => {
     const imageSrc = webcamRef.current.getScreenshot();
     setCapturedImage(imageSrc);
     setErrorMessage('');
+    const base64String = capturedImage.split(",")[1]; // Remove the data URL prefix
+
+    try {
+      const res = await fetch("/compare_faces/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image: base64String }),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setResponse(result);
+      } else {
+        setErrorMessage("Failed to send the image to the backend.");
+      }
+    } catch (error) {
+      console.error("Error sending image to backend:", error);
+      setErrorMessage("An error occurred while sending the image.");
+    }
+
   };
 
   const authenticateFaculty = async () => {

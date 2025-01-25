@@ -144,9 +144,9 @@ function App() {
   };
 
   const ProfileHeader = () => (
-    <Box sx={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       pb: 3
     }}>
@@ -179,7 +179,7 @@ function App() {
           </IconButton>
         )}
       </Box>
-      
+
       <Box sx={{ textAlign: 'center', width: '100%', maxWidth: 400 }}>
         {isEditing ? (
           <TextField
@@ -200,7 +200,7 @@ function App() {
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           Faculty ID: {facultyInfo.facultyId}
         </Typography>
-        
+
         <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
           {Object.entries(facultyInfo.socialLinks).map(([platform, link]) => {
             const Icon = {
@@ -235,12 +235,12 @@ function App() {
       display: 'flex',
       flexDirection: 'column'
     }}>
-      <Box sx={{ 
+      <Box sx={{
         p: { xs: 1, sm: 2 },
         flex: 1,
         overflow: 'auto'
       }}>
-        <Paper sx={{ 
+        <Paper sx={{
           maxWidth: 1200,
           mx: 'auto',
           height: '83vh',
@@ -249,8 +249,8 @@ function App() {
           overflow: 'hidden'
         }}>
           <Box sx={{ p: { xs: 2, sm: 3 } }}>
-            <Box sx={{ 
-              display: 'flex', 
+            <Box sx={{
+              display: 'flex',
               justifyContent: 'flex-end',
               gap: 1,
               mb: 3
@@ -269,99 +269,98 @@ function App() {
                 Change Password
               </Button>
             </Box>
-          backgroundColor: '#ffffff',
-        }}
-      >
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
-          <Typography variant="h5" sx={{ color: '#1a237e' }}>
-            Faculty Profile
-          </Typography>
-          <Box>
-            <Button
-              startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
-              variant="outlined"
-              sx={{ color: '#1a237e', borderColor: '#1a237e', mr: 2 }}
-              onClick={isEditing ? handleSave : handleEditToggle}
-            >
-              {isEditing ? "Save Profile" : "Edit Profile"}
-            </Button>
-            <Button
-              variant="outlined"
-              sx={{ color: '#1a237e', borderColor: '#1a237e' }}
-              onClick={() => setPasswordDialogOpen(true)}
-            >
-              Change Password
-            </Button>
-          </Box>
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            mb: 4,
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-          }}
-        >
-          <Box sx={{ position: 'relative', display: 'inline-block', textAlign: 'center' }}>
-            <Avatar
-              sx={{
-                width: 120,
-                height: 120,
-                backgroundColor: '#1a237e',
-                color: '#ffffff',
-                fontSize: 28,
-              }}
-              src={facultyInfo.profileImage || undefined}
-            >
-              {!facultyInfo.profileImage && facultyInfo.name.split(' ').map((n) => n[0]).join('')}
-            </Avatar>
-            {isEditing && (
-              <IconButton
-                component="label"
-                sx={{
-                  position: 'absolute',
-                  bottom: -5,
-                  right: -5,
-                  backgroundColor: '#ffffff',
-                  boxShadow: 1,
-                  borderRadius: '50%',
-                }}
-              >
-                <CameraAltIcon sx={{ color: '#1a237e' }} />
-                <input
-                  type="file"
-                  hidden
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-              </IconButton>
-            )}
-          </Box>
-          <Box sx={{ textAlign: 'center', mt: 2, px: { lg: 2 } }}>
-            {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                size="small"
-                value={facultyInfo.name}
-                onChange={(e) => handleChange('name', e.target.value)}
-                sx={{ mb: 1 }}
-              />
-            ) : (
-              <Typography variant="h4" sx={{ color: '#1a237e', fontWeight: 'bold' }}>
-                {facultyInfo.name}
+            </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+              <Typography variant="h5" sx={{ color: '#1a237e' }}>
+                Faculty Profile
               </Typography>
-            )}
-            <Typography variant="subtitle1" color="text.secondary">
-              {facultyInfo.position}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Faculty ID: {facultyInfo.facultyId}
-            </Typography>
-          </Box>
+              <Box>
+                <Button
+                  startIcon={isEditing ? <SaveIcon /> : <EditIcon />}
+                  variant="outlined"
+                  sx={{ color: '#1a237e', borderColor: '#1a237e', mr: 2 }}
+                  // onClick={isEditing ? handleSave : handleEditToggle}
+                >
+                  {isEditing ? "Save Profile" : "Edit Profile"}
+                </Button>
+                <Button
+                  variant="outlined"
+                  sx={{ color: '#1a237e', borderColor: '#1a237e' }}
+                  onClick={() => setPasswordDialogOpen(true)}
+                >
+                  Change Password
+                </Button>
+              </Box>
+            </Box>
+        </Paper>
         </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                mb: 4,
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
+              <Box sx={{ position: 'relative', display: 'inline-block', textAlign: 'center' }}>
+                <Avatar
+                  sx={{
+                    width: 120,
+                    height: 120,
+                    backgroundColor: '#1a237e',
+                    color: '#ffffff',
+                    fontSize: 28,
+                  }}
+                  src={facultyInfo.profileImage || undefined}
+                >
+                  {!facultyInfo.profileImage && facultyInfo.name.split(' ').map((n) => n[0]).join('')}
+                </Avatar>
+                {isEditing && (
+                  <IconButton
+                    component="label"
+                    sx={{
+                      position: 'absolute',
+                      bottom: -5,
+                      right: -5,
+                      backgroundColor: '#ffffff',
+                      boxShadow: 1,
+                      borderRadius: '50%',
+                    }}
+                  >
+                    <CameraAltIcon sx={{ color: '#1a237e' }} />
+                    <input
+                      type="file"
+                      hidden
+                      accept="image/*"
+                      onChange={handleImageChange}
+                    />
+                  </IconButton>
+                )}
+              </Box>
+              <Box sx={{ textAlign: 'center', mt: 2, px: { lg: 2 } }}>
+                {isEditing ? (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    size="small"
+                    value={facultyInfo.name}
+                    onChange={(e) => handleChange('name', e.target.value)}
+                    sx={{ mb: 1 }}
+                  />
+                ) : (
+                  <Typography variant="h4" sx={{ color: '#1a237e', fontWeight: 'bold' }}>
+                    {facultyInfo.name}
+                  </Typography>
+                )}
+                <Typography variant="subtitle1" color="text.secondary">
+                  {facultyInfo.position}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Faculty ID: {facultyInfo.facultyId}
+                </Typography>
+              </Box>
+            </Box>
 
 
             <ProfileHeader />
@@ -514,135 +513,136 @@ function App() {
                 </Box>
               )}
 
-        <Grid container spacing={4}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
-              Contact Information
-            </Typography>
-            <InfoItem
-              icon={<EmailIcon color="action" />}
-              label="Email"
-              value={facultyInfo.email}
-              field="email"
-            />
-            <InfoItem
-              icon={<PhoneIcon color="action" />}
-              label="Phone"
-              value={facultyInfo.phone}
-              field="phone"
-            />
-            <InfoItem
-              icon={<LocationOnIcon color="action" />}
-              label="Office"
-              value={facultyInfo.location}
-              field="location"
-            />
-          </Grid>
-
-          <          Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
-              Academic Information
-            </Typography>
-            <InfoItem
-              icon={<BusinessIcon color="action" />}
-              label="Department"
-              value={facultyInfo.department}
-              field="department"
-            />
-            <InfoItem
-              icon={<SchoolIcon color="action" />}
-              label="Education"
-              value={facultyInfo.education}
-              field="education"
-            />
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <ClassIcon color="action" />
-              <Box sx={{ ml: 2, flex: 1 }}>
-                <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}>
-                  Courses
-                </Typography>
-                {isEditing ? (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    size="small"
-                    value={facultyInfo.courses.join(', ')}
-                    onChange={(e) =>
-                      handleChange('courses', e.target.value.split(',').map((course) => course.trim()))
-                    }
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
+                    Contact Information
+                  </Typography>
+                  <InfoItem
+                    icon={<EmailIcon color="action" />}
+                    label="Email"
+                    value={facultyInfo.email}
+                    field="email"
                   />
-                ) : (
-                  <Typography variant="body1">{facultyInfo.courses.join(', ')}</Typography>
-                )}
-              </Box>
+                  <InfoItem
+                    icon={<PhoneIcon color="action" />}
+                    label="Phone"
+                    value={facultyInfo.phone}
+                    field="phone"
+                  />
+                  <InfoItem
+                    icon={<LocationOnIcon color="action" />}
+                    label="Office"
+                    value={facultyInfo.location}
+                    field="location"
+                  />
+                </Grid>
 
-            </Box>
-          </Box>
-        </Paper>
+                <          Grid item xs={12} md={6}>
+                  <Typography variant="h6" gutterBottom sx={{ color: '#1a237e' }}>
+                    Academic Information
+                  </Typography>
+                  <InfoItem
+                    icon={<BusinessIcon color="action" />}
+                    label="Department"
+                    value={facultyInfo.department}
+                    field="department"
+                  />
+                  <InfoItem
+                    icon={<SchoolIcon color="action" />}
+                    label="Education"
+                    value={facultyInfo.education}
+                    field="education"
+                  />
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <ClassIcon color="action" />
+                    <Box sx={{ ml: 2, flex: 1 }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 'bold' }}>
+                        Courses
+                      </Typography>
+                      {isEditing ? (
+                        <TextField
+                          fullWidth
+                          variant="outlined"
+                          size="small"
+                          value={facultyInfo.courses.join(', ')}
+                          onChange={(e) =>
+                            handleChange('courses', e.target.value.split(',').map((course) => course.trim()))
+                          }
+                        />
+                      ) : (
+                        <Typography variant="body1">{facultyInfo.courses.join(', ')}</Typography>
+                      )}
+                    </Box>
+
+                  </Box>
+                </Grid>
+              </Grid>
       </Box>
+      
 
-      <Dialog 
-        open={passwordDialogOpen} 
-        onClose={() => setPasswordDialogOpen(false)}
-        maxWidth="xs"
-        fullWidth
-      >
-        <DialogTitle>Change Password</DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ mb: 2 }}>
-            Please enter your current password and set a new one.
-          </DialogContentText>
-          <TextField
-            margin="dense"
-            label="Current Password"
-            type="password"
-            fullWidth
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="New Password"
-            type="password"
-            fullWidth
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-          />
-          <TextField
-            margin="dense"
-            label="Confirm New Password"
-            type="password"
-            fullWidth
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
-          <Button onClick={() => setPasswordDialogOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handlePasswordChange} variant="contained">
-            Change Password
-          </Button>
-        </DialogActions>
-      </Dialog>
+            <Dialog
+              open={passwordDialogOpen}
+              onClose={() => setPasswordDialogOpen(false)}
+              maxWidth="xs"
+              fullWidth
+            >
+              <DialogTitle>Change Password</DialogTitle>
+              <DialogContent>
+                <DialogContentText sx={{ mb: 2 }}>
+                  Please enter your current password and set a new one.
+                </DialogContentText>
+                <TextField
+                  margin="dense"
+                  label="Current Password"
+                  type="password"
+                  fullWidth
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
+                <TextField
+                  margin="dense"
+                  label="New Password"
+                  type="password"
+                  fullWidth
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <TextField
+                  margin="dense"
+                  label="Confirm New Password"
+                  type="password"
+                  fullWidth
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </DialogContent>
+              <DialogActions sx={{ p: 2 }}>
+                <Button onClick={() => setPasswordDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handlePasswordChange} variant="contained">
+                  Change Password
+                </Button>
+              </DialogActions>
+            </Dialog>
 
-      <Snackbar
-        open={!!successMessage}
-        autoHideDuration={3000}
-        onClose={() => setSuccessMessage("")}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Alert 
-          severity="success" 
-          sx={{ width: '100%' }}
-          onClose={() => setSuccessMessage("")}
-        >
-          {successMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
-  );
+            <Snackbar
+              open={!!successMessage}
+              autoHideDuration={3000}
+              onClose={() => setSuccessMessage("")}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+              <Alert
+                severity="success"
+                sx={{ width: '100%' }}
+                onClose={() => setSuccessMessage("")}
+              >
+                {successMessage}
+              </Alert>
+            </Snackbar>
+          </Box>
+          );
 }
 
-export default App;
+          export default App;

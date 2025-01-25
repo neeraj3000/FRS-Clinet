@@ -5,6 +5,7 @@ import Webcam from 'react-webcam';
 const FacultyDashboard = () => {
   const [capturedImage, setCapturedImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
+  const [response, setResponse] = useState(null);
   const [greeting, setGreeting] = useState('');
   const [facultyName, setFacultyName] = useState('Dr. John Doe');
   const [isLoading, setIsLoading] = useState(false); // Loading state
@@ -19,11 +20,41 @@ const FacultyDashboard = () => {
     }
   }, [facultyName]);
 
-  const captureImage = () => {
-    const imageSrc = webcamRef.current.getScreenshot();
+  const captureImage = async () => {
+    const imageSrc = webcamRef.current.getScreenshot(); // Capture the image
+
+    if (!imageSrc) { // Ensure an image is captured
+        setErrorMessage('Please capture your image for authentication.');
+        return;
+    }
+
     setCapturedImage(imageSrc);
     setErrorMessage('');
-  };
+
+    const base64String = imageSrc.split(",")[1]; // Extract base64 data from imageSrc
+
+    try {
+        const res = await fetch("http://127.0.0.1:8000/capturing-images/compare_faces", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ image: base64String }),
+        });
+
+        if (res.ok) {
+            const result = await res.json();
+            setResponse(result);
+            console.log(result);
+        } else {
+            setErrorMessage("Failed to send the image to the backend.");
+        }
+    } catch (error) {
+        console.error("Error sending image to backend:", error);
+        setErrorMessage("An error occurred while sending the image.");
+    }
+};
+
 
   const authenticateFaculty = async () => {
     if (!capturedImage) {

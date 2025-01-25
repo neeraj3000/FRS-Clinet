@@ -20,9 +20,10 @@ import {
   Fade,
   LinearProgress,
   Chip,
-  Avatar
+  Avatar,
+  createTheme,
+  ThemeProvider
 } from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {
   PhotoCamera,
   Search as SearchIcon,
@@ -35,6 +36,18 @@ import {
   Undo as UndoIcon
 } from '@mui/icons-material';
 
+// Create theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#2196f3',
+    },
+    secondary: {
+      main: '#4caf50',
+    },
+  },
+});
+
 // Stats Component
 const AttendanceStats = ({ presentCount, totalCount }) => {
   const attendanceRate = ((presentCount / totalCount) * 100).toFixed(1);
@@ -45,12 +58,7 @@ const AttendanceStats = ({ presentCount, totalCount }) => {
         <Grid container spacing={3}>
           <Grid item xs={12} md={4}>
             <Box sx={{ textAlign: 'center', p: 2 }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                mb: 2 
-              }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                 <Avatar sx={{ bgcolor: 'primary.light', mr: 2 }}>
                   <TrendingUpIcon />
                 </Avatar>
@@ -66,12 +74,7 @@ const AttendanceStats = ({ presentCount, totalCount }) => {
           
           <Grid item xs={12} md={4}>
             <Box sx={{ textAlign: 'center', p: 2 }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                mb: 2 
-              }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                 <Avatar sx={{ bgcolor: 'secondary.light', mr: 2 }}>
                   <GroupIcon />
                 </Avatar>
@@ -87,12 +90,7 @@ const AttendanceStats = ({ presentCount, totalCount }) => {
           
           <Grid item xs={12} md={4}>
             <Box sx={{ textAlign: 'center', p: 2 }}>
-              <Box sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                mb: 2 
-              }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
                 <Avatar sx={{ bgcolor: 'warning.light', mr: 2 }}>
                   <AccessTimeIcon />
                 </Avatar>
@@ -115,7 +113,8 @@ const MarkAttendance = () => {
   // States
   const [activeStep, setActiveStep] = useState(0);
   const [isCapturing, setIsCapturing] = useState(false);
-  const [frameCount, setFrameCount] = useState(0);
+  const [frameCount, setFrameCount] = useState(1);
+  const [capturedFrames, setCapturedFrames] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [attendanceProcessed, setAttendanceProcessed] = useState(false);
   const [cameraError, setCameraError] = useState(null);
@@ -125,6 +124,7 @@ const MarkAttendance = () => {
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
+  const canvasRef = useRef(document.createElement('canvas'));
 
   // Sample student database
   const allStudents = [
@@ -168,18 +168,32 @@ const MarkAttendance = () => {
     }
   };
 
+  const captureFrame = () => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    const video = videoRef.current;
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    const frameDataUrl = canvas.toDataURL('image/jpeg');
+    setCapturedFrames(prev => [...prev, frameDataUrl]);
+  };
+
   const handleStartCapture = async () => {
     await startCamera();
     setIsCapturing(true);
-    setFrameCount(0);
+    setCapturedFrames([]);
     
     const interval = setInterval(() => {
       setFrameCount(prev => {
-        if (prev >= 4) {
+        if (prev >= 5) {
           clearInterval(interval);
           handleCaptureComplete();
           return 5;
         }
+        captureFrame();
         return prev + 1;
       });
     }, 1000);
@@ -203,12 +217,13 @@ const MarkAttendance = () => {
 
   const handleReset = () => {
     setActiveStep(0);
-    setFrameCount(0);
+    setFrameCount(1);
     setIsCapturing(false);
     setAttendanceProcessed(false);
     setPresentStudents([]);
     setAbsentStudents([]);
     setRecentlyMoved(null);
+    setCapturedFrames([]);
     stopCamera();
   };
 
@@ -238,22 +253,22 @@ const MarkAttendance = () => {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Box sx={{ mb: 4 }}>
           {/* Header */}
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center', 
-            mb: 4 
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            mb: 4
           }}>
-            <Typography 
-              variant="h4" 
-              sx={{ 
+            <Typography
+              variant="h4"
+              sx={{
                 background: 'linear-gradient(45deg, #2196f3 30%, #4caf50 90%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 fontWeight: 'bold'
               }}
             >
-              Mark Attendance 
+              Mark Attendance
             </Typography>
             {attendanceProcessed && (
               <Button
@@ -269,18 +284,18 @@ const MarkAttendance = () => {
             )}
           </Box>
 
-          {/* Stats Overview - Only shown after capture */}
+          {/* Stats Overview */}
           {attendanceProcessed && (
-            <AttendanceStats 
-              presentCount={presentStudents.length} 
+            <AttendanceStats
+              presentCount={presentStudents.length}
               totalCount={allStudents.length}
             />
           )}
           
           {/* Stepper */}
-          <Stepper 
-            activeStep={activeStep} 
-            sx={{ 
+          <Stepper
+            activeStep={activeStep}
+            sx={{
               mb: 4,
               '& .MuiStepLabel-root .Mui-completed': {
                 color: 'secondary.main',
@@ -299,20 +314,20 @@ const MarkAttendance = () => {
 
           {/* Camera Section */}
           {activeStep === 0 && (
-            <Card 
-              sx={{ 
+            <Card
+              sx={{
                 mb: 4,
                 background: 'linear-gradient(120deg, rgba(33, 150, 243, 0.05), rgba(76, 175, 80, 0.05))'
               }}
             >
               <CardContent>
-                <Box sx={{ 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
-                  gap: 3 
+                <Box sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 3
                 }}>
-                  <Box sx={{ 
+                  <Box sx={{
                     width: '100%',
                     maxWidth: 640,
                     height: 480,
@@ -358,11 +373,11 @@ const MarkAttendance = () => {
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                       }}>
                         <Typography color="primary">
-                          Frame {frameCount + 1}/5
+                          Frame {frameCount}/5
                         </Typography>
-                        <LinearProgress 
-                          variant="determinate" 
-                          value={(frameCount + 1) * 20} 
+                        <LinearProgress
+                          variant="determinate"
+                          value={(frameCount / 5) * 100}
                           sx={{ mt: 1 }}
                         />
                       </Box>
@@ -370,9 +385,9 @@ const MarkAttendance = () => {
                   </Box>
 
                   {cameraError && (
-                    <Alert 
-                      severity="error" 
-                      sx={{ 
+                    <Alert
+                      severity="error"
+                      sx={{
                         width: '100%',
                         borderRadius: 2
                       }}
@@ -404,11 +419,11 @@ const MarkAttendance = () => {
           {activeStep === 1 && (
             <Fade in={attendanceProcessed}>
               <Box>
-                <Box sx={{ 
-                  mb: 3, 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  alignItems: 'center' 
+                <Box sx={{
+                  mb: 3,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
                 }}>
                   <Typography variant="h6">
                     Attendance Results
@@ -450,29 +465,25 @@ const MarkAttendance = () => {
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           InputProps={{
-                            startAdornment: <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} />,
+                            startAdornment: <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />,
                           }}
                           sx={{ mb: 2 }}
                         />
                         <List>
                           {filteredPresentStudents.map((student) => (
-                            <ListItem
-                              key={student.id}
-                              sx={{
-                                bgcolor: 'background.paper',
-                                mb: 1,
-                                borderRadius: 1,
-                              }}
-                            >
+                            <ListItem key={student.id}>
                               <ListItemText
                                 primary={student.name}
                                 secondary={`ID: ${student.id}`}
                               />
-                              <Chip
-                                color="success"
-                                label="Present"
-                                size="small"
-                              />
+                              <ListItemSecondaryAction>
+                                <Chip
+                                  icon={<CheckIcon />}
+                                  label="Present"
+                                  color="success"
+                                  size="small"
+                                />
+                              </ListItemSecondaryAction>
                             </ListItem>
                           ))}
                         </List>
@@ -480,7 +491,8 @@ const MarkAttendance = () => {
                     </Card>
                   </Grid>
 
-                   <Grid item xs={12} md={6}>
+                  {/* Absent Students List */}
+                  <Grid item xs={12} md={6}>
                     <Card>
                       <CardContent>
                         <Typography variant="h6" sx={{ mb: 2 }}>
@@ -488,44 +500,20 @@ const MarkAttendance = () => {
                         </Typography>
                         <List>
                           {absentStudents.map((student) => (
-                            <ListItem
-                              key={student.id}
-                              sx={{
-                                bgcolor: 'background.paper',
-                                mb: 1,
-                                borderRadius: 1,
-                              }}
-                            >
+                            <ListItem key={student.id}>
                               <ListItemText
                                 primary={student.name}
                                 secondary={`ID: ${student.id}`}
                               />
-                              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                <Chip
-                                  label="Absent"
-                                  size="small"
-                                  sx={{
-                                    color: 'white',
-                                    borderColor: 'error.main',
-                                    bgcolor: 'error.light',
-                                    opacity: 0.9
-                                  }}
-                                />
+                              <ListItemSecondaryAction>
                                 <Button
+                                  variant="outlined"
                                   size="small"
                                   onClick={() => moveToPresent(student)}
-                                  sx={{
-                                    minWidth: 'auto',
-                                    color: 'primary.main',
-                                    '&:hover': {
-                                      bgcolor: 'primary.light',
-                                      color: 'white'
-                                    }
-                                  }}
                                 >
-                                  Move
+                                  Mark Present
                                 </Button>
-                              </Box>
+                              </ListItemSecondaryAction>
                             </ListItem>
                           ))}
                         </List>
@@ -541,69 +529,5 @@ const MarkAttendance = () => {
     </ThemeProvider>
   );
 };
-
-// Theme configuration
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#2196f3',
-      light: '#64b5f6',
-      dark: '#1976d2',
-    },
-    secondary: {
-      main: '#4caf50',
-      light: '#81c784',
-      dark: '#388e3c',
-    },
-    background: {
-      default: '#f5f5f5',
-      paper: '#ffffff',
-    },
-    error: {
-      main: '#ef5350',
-      light: '#e57373',
-    },
-  },
-  typography: {
-    fontFamily: '"Poppins", "Roboto", "Helvetica", "Arial", sans-serif',
-    h4: {
-      fontWeight: 600,
-    },
-    h6: {
-      fontWeight: 500,
-    },
-  },
-  shape: {
-    borderRadius: 12,
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          borderRadius: 8,
-          padding: '8px 16px',
-        },
-        contained: {
-          boxShadow: '0 4px 6px rgba(33, 150, 243, 0.2)',
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          boxShadow: '0 2px 12px rgba(0, 0, 0, 0.06)',
-        },
-      },
-    },
-  },
-});
 
 export default MarkAttendance;

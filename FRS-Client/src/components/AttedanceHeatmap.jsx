@@ -126,7 +126,6 @@ const AttendanceCalendar = ({ attendanceData }) => {
               </Box>
             ))}
           </Box>
-        </Box>
 
 
         {/* Calendar Section */}
@@ -156,7 +155,7 @@ const AttendanceCalendar = ({ attendanceData }) => {
             ))}
           </Grid>
         </Box>
-      </Box>
+
     </Paper>
   );
 };

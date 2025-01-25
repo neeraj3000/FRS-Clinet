@@ -83,7 +83,7 @@ const AttendanceChart = ({ data }) => {
       sx={{
         padding: { xs: 0, sm: 2 },
         borderRadius: 3,
-        backgroundColor: "rgba(142, 213, 241, 0.5)",
+        // backgroundColor: "rgba(142, 213, 241, 0.5)",
         width: "100%",
       }}
     >
@@ -114,7 +114,7 @@ const AttendanceChart = ({ data }) => {
             size="small"
             sx={{
               minWidth: { xs: 100, sm: 150, md: 200 },
-              backgroundColor: "rgba(161, 236, 190, 0.5)",
+              // backgroundColor: "rgba(161, 236, 190, 0.5)",
             }}
           >
             <Select
@@ -131,7 +131,7 @@ const AttendanceChart = ({ data }) => {
             size="small"
             sx={{
               minWidth: { xs: 100, sm: 150, md: 200 },
-              backgroundColor: "rgba(161, 236, 190, 0.5)",
+              // backgroundColor: "rgba(161, 236, 190, 0.5)",
             }}
           >
             <Select
@@ -148,10 +148,10 @@ const AttendanceChart = ({ data }) => {
       </Box>
 
       {/* Chart Section */}
-      <Box sx={{ backgroundColor: "rgba(142, 213, 241, 0.0)", borderRadius: 2, padding:0 }}>
+      <Box sx={{ padding: 0 }}>
         <ResponsiveContainer width="100%" height="100%" minHeight={300}>
           <LineChart data={chartData} margin={{ top: 20, right: 20, left: 1, bottom: 40 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#888888" />
             <XAxis
               dataKey="date"
               label={{

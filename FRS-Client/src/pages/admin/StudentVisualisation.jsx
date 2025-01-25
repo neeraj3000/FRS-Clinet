@@ -1,124 +1,340 @@
-import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Grid,
+  Paper,
+  TextField,
+  Button,
+} from "@mui/material";
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Cell,
+} from "recharts";
+import SchoolIcon from "@mui/icons-material/School";
+import PercentIcon from "@mui/icons-material/Percent";
 
-import DailyAttendanceAnalysis from "./DailyAttendanceAnalysis";
-import WeeklyAttendanceAnalysis from "./WeeklyAttendanceAnalysis";
-import StudentProfile from './StudentProfile'
-import StudentAttedanceHeatmap from './StudentAttendanceHeatmap'
-
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode.secondary ,
-  padding: theme.spacing(0.5),
-  color: theme.palette.text.secondary,
-  width: 'fit-content',
-  // border: '1px solid gray', // Thin neon border
-  borderRadius: '8px', // Optional smooth corners
-  // boxShadow: '0 0 5px gray', // Subtle neon glow effect
-  // transition: 'box-shadow 0.3s ease-in-out',
-  // '&:hover': {
-  //   boxShadow: '0 0 10px gray', // Slightly stronger glow on hover
-  // },
-}));
-
-
-const studentData = {
-  fullName: "John Doe",
-  studentId: "123456",
-  profilePicture: "https://example.com/profile.jpg",
-  classGrade: "10th Grade",
-  section: "A",
-  enrollmentDate: "2021-09-01",
-  contactInfo: {
-    email: "john.doe@example.com",
-    phone: "+1234567890"
-  }
+const staticData = {
+  yearlyData: [
+    {
+      year: "E1",
+      totalStudents: 350,
+      averageAttendance: 85.35,
+      sections: [
+        { section: "A", attendance: 80.56 },
+        { section: "B", attendance: 78.92 },
+        { section: "C", attendance: 84.71 },
+        { section: "D", attendance: 89.45 },
+        { section: "E", attendance: 91.23 },
+      ],
+    },
+    {
+      year: "E2",
+      totalStudents: 350,
+      averageAttendance: 80.42,
+      sections: [
+        { section: "A", attendance: 75.56 },
+        { section: "B", attendance: 82.36 },
+        { section: "C", attendance: 78.43 },
+        { section: "D", attendance: 81.24 },
+        { section: "E", attendance: 85.67 },
+      ],
+    },
+    {
+      year: "E3",
+      totalStudents: 350,
+      averageAttendance: 82.78,
+      sections: [
+        { section: "A", attendance: 80.45 },
+        { section: "B", attendance: 85.91 },
+        { section: "C", attendance: 81.22 },
+        { section: "D", attendance: 79.64 },
+        { section: "E", attendance: 88.39 },
+      ],
+    },
+    {
+      year: "E4",
+      totalStudents: 350,
+      averageAttendance: 91.12,
+      sections: [
+        { section: "A", attendance: 90.45 },
+        { section: "B", attendance: 89.32 },
+        { section: "C", attendance: 91.56 },
+        { section: "D", attendance: 92.34 },
+        { section: "E", attendance: 93.87 },
+      ],
+    },
+  ],
+  weeklyTrend: [
+    { day: "Mon", attendance: 85.34 },
+    { day: "Tue", attendance: 82.45 },
+    { day: "Wed", attendance: 88.56 },
+    { day: "Thu", attendance: 86.76 },
+    { day: "Fri", attendance: 84.12 },
+    { day: "Sat", attendance: 80.45 },
+    { day: "Sun", attendance: 75.67 },
+  ],
 };
 
-export default function StudentVisualisation() {
-  const [searchValue, setSearchValue] = React.useState("");
-  const [searchResult, setSearchResult] = React.useState(null);
+const COLORS = ["#1976d2", "#2e7d32", "#ed6c02", "#9c27b0", "#d32f2f"];
 
-  const handleSearch = async () => {
-    try {
-      // const response = await fetch(`https://your-backend-url.com/search`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ searchValue }),
-      // });
+const AttendanceDashboard = () => {
+  const [data] = useState(staticData);
+  const [enteredID, setEnteredID] = useState("");
+  const navigate = useNavigate();
 
-      // const data = await response.json();
-      setSearchResult([1, 2, 3]);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleIDChange = (e) => {
+    setEnteredID(e.target.value);
   };
-  return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={1}>
-        <Grid item xs={12}>
-          <Item>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                height: "40%",
-              }}
-            >
-              <TextField
-                label="Search"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                sx={{ width: "90%",margin:'5px' }}
-                size="small"
-              />
-              <Button variant="contained" onClick={handleSearch} size='small'
-              sx={{height:'40px'}}
-              >
-                Search
-              </Button>
-            </Box>
-          </Item>
-        </Grid>
-        {!searchResult && (
-          <React.Fragment>
-            <Grid item xs={6}>
-              <Item>
-                <DailyAttendanceAnalysis></DailyAttendanceAnalysis>
-              </Item>
-            </Grid>
-            <Grid item xs={6}>
-              <Item>
-                <WeeklyAttendanceAnalysis></WeeklyAttendanceAnalysis>
-              </Item>
-            </Grid>
-          </React.Fragment>
-        )}
-      </Grid>
-      {searchResult && (
-        <React.Fragment>
-          <Grid container spacing={2}>
 
-          <Grid item xs={6}>
-              <StudentProfile {...studentData} />
+  const handleSearch = () => {
+    const cleanedID = enteredID.replace("R", "");
+    navigate(`/admin/studentvisualisation/${cleanedID}`);
+  };
+
+  const StatCard = ({ title, value, icon: Icon, color, isPercentage }) => (
+    <Card elevation={3}>
+      <CardContent>
+        <Box display="flex" alignItems="center" justifyContent="space-between">
+          <Box>
+            <Typography color="textSecondary" gutterBottom variant="body2">
+              {title}
+            </Typography>
+            <Typography variant="h5" component="div">
+              {isPercentage ? `${value.toFixed(2)}%` : value}
+            </Typography>
+          </Box>
+          <Icon sx={{ fontSize: 40, color }} />
+        </Box>
+      </CardContent>
+    </Card>
+  );
+  
+
+  const handleYearClick = (year) => {
+    year = year.charAt(0).toLowerCase() + year.slice(1);
+    navigate(`/admin/todayclasses/${year}`);
+  };
+
+  return (
+    <Box sx={{ p: 3 }}>
+      <Box
+        sx={{
+          mb: { xs: 2, sm: 3 },
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
+        <Typography variant="h5" component="h1" fontWeight="bold" color="#1a237e">
+          Students Analysis
+        </Typography>
+
+        <Box display="flex" gap={1}>
+          <TextField
+            type="text"
+            value={enteredID}
+            onChange={handleIDChange}
+            sx={{
+              width: { xs: "100%", sm: 200 },
+              "& .MuiOutlinedInput-root": {
+                borderRadius: 2,
+                backgroundColor: "white",
+              },
+            }}
+            size="small"
+            label="Enter ID"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleSearch();
+              }
+            }}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSearch}
+            sx={{
+              alignSelf: "center",
+            }}
+            size="medium"
+          >
+            Search
+          </Button>
+        </Box>
+      </Box>
+
+      <Grid container spacing={3}>
+        {data.yearlyData.map((yearData) => (
+          <Grid
+            item
+            xs={12}
+            md={3}
+            key={yearData.year}
+            onClick={() => handleYearClick(yearData.year)}
+            sx={{ cursor: "pointer" }}
+          >
+            <Typography variant="h6" gutterBottom>
+              {yearData.year} Year Statistics
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <StatCard
+                  title="Total Students"
+                  value={yearData.totalStudents}
+                  icon={SchoolIcon}
+                  color="#1976d2"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <StatCard
+                  title="Average Attendance"
+                  value={yearData.averageAttendance}
+                  icon={PercentIcon}
+                  color="#2e7d32"
+                />
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-              <Item>
-              <WeeklyAttendanceAnalysis></WeeklyAttendanceAnalysis>
-              </Item>
+        ))}
+
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Year-wise Average Attendance
+            </Typography>
+            <Box height={400}>
+              <ResponsiveContainer>
+                <BarChart data={data.yearlyData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="year"
+                    label={{
+                      value: "Year",
+                      position: "insideBottomRight",
+                      offset: -5,
+                    }}
+                  />
+                  <YAxis
+                    domain={[0, 100]}
+                    label={{
+                      value: "Average Attendance (%)",
+                      angle: -90,
+                      position: "insideCenter",
+                      dx: -15,
+                    }}
+                  />
+                  <Tooltip />
+                  <Legend />
+                  <Bar
+                    dataKey="averageAttendance"
+                    fill="#1976d2"
+                    name="Average Attendance (%)"
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </Box>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Weekly Attendance Trend
+            </Typography>
+            <Box height={400}>
+              <ResponsiveContainer>
+                <LineChart data={data.weeklyTrend}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="day"
+                    label={{
+                      value: "Day of the Week",
+                      position: "insideBottomRight",
+                      offset: -5,
+                    }}
+                  />
+                  <YAxis
+                    domain={[0, 100]}
+                    label={{
+                      value: "Attendance (%)",
+                      angle: -90,
+                      position: "insideCenter",
+                      dx: -15,
+                    }}
+                  />
+                  <Tooltip />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="attendance"
+                    stroke="#2e7d32"
+                    name="Attendance (%)"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </Box>
+          </Paper>
+        </Grid>
+
+        {data.yearlyData.map((yearData, index) => (
+          <Grid item xs={12} md={6} key={yearData.year}>
+            <Paper
+              elevation={3}
+              sx={{ p: 2 }}
+              onClick={() => handleYearClick(yearData.year)}
+            >
+              <Typography variant="h6" gutterBottom>
+                {yearData.year} Year Section-wise Attendance
+              </Typography>
+              <Box height={400}>
+                <ResponsiveContainer>
+                  <PieChart>
+                    <Pie
+                      data={yearData.sections}
+                      dataKey="attendance"
+                      nameKey="section"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={120}
+                      fill="#8884d8"
+                      label={(entry) =>
+                        `${entry.section}: ${entry.attendance.toFixed(2)}%`
+                      }
+                    >
+                      {yearData.sections.map((_, idx) => (
+                        <Cell
+                          key={`cell-${idx}`}
+                          fill={COLORS[idx % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+            </Paper>
           </Grid>
-          </Grid>
-          <Grid container spacing={1}>
-            <StudentAttedanceHeatmap></StudentAttedanceHeatmap>
-          </Grid> 
-        </React.Fragment>
-      )}
+        ))}
+      </Grid>
     </Box>
   );
-}
+};
+
+export default AttendanceDashboard;

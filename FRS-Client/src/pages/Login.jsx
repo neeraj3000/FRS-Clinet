@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { TextField, Button, Radio, RadioGroup, FormControlLabel, Typography, Box, Link } from '@mui/material';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
+// Validation Schema for Formik
 const validationSchema = yup.object({
   email: yup.string().email('Invalid email').required('Email is required'),
   password: yup.string().required('Password is required'),
@@ -11,7 +12,32 @@ const validationSchema = yup.object({
 });
 
 const Login = () => {
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const navigate = useNavigate();
+  const [error, setError] = useState(null);
+
+  const login = async (email, password, role) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, role }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('token', data.token.access_token);
+      localStorage.setItem('role', role);
+      return { email, role, token: data.token.access_token };
+    } catch (error) {
+      throw new Error('Login failed');
+    }
+  };
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -19,17 +45,25 @@ const Login = () => {
       role: ''
     },
     validationSchema,
-    validateOnBlur: true, // Validate on blur (when the field loses focus)
-    onSubmit: (values) => {
-      console.log(values);
-      // Handle login logic here
-      // After successful login, redirect based on selected role
-      if (values.role === 'student') {
-        navigate('/student'); // Redirect to /student
-      } else if (values.role === 'faculty') {
-        navigate('/faculty'); // Redirect to /faculty
-      } else if (values.role === 'admin') {
-        navigate('/admin'); // Redirect to /admin
+    validateOnBlur: true,
+    onSubmit: async (values) => {
+      try {
+        const userData = await login(values.email, values.password, values.role);
+        switch (userData.role) {
+          case 'student':
+            navigate('/student');
+            break;
+          case 'faculty':
+            navigate('/faculty');
+            break;
+          case 'admin':
+            navigate('/admin');
+            break;
+          default:
+            alert('Invalid role');
+        }
+      } catch (error) {
+        setError('Login failed. Please check your credentials.');
       }
     }
   });
@@ -38,6 +72,7 @@ const Login = () => {
     <Box sx={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <Box sx={{ maxWidth: 400, height: "fit-content", mx: 'auto', mt: 4, p: 3, boxShadow: 3 }}>
         <Typography variant="h4" gutterBottom>Login</Typography>
+        {error && <Typography color="error">{error}</Typography>}
         <form onSubmit={formik.handleSubmit}>
           <RadioGroup
             name="role"
@@ -83,7 +118,6 @@ const Login = () => {
             Login
           </Button>
 
-          {/* Forgot Password and Sign-up Links */}
           <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
             <Typography>
               <Link component={RouterLink} to="/signup">Sign up here</Link>

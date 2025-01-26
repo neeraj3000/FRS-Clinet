@@ -45,8 +45,12 @@ import MarkAttendance from "./pages/Faculty/MarkAttendance";
 import Registrations from "./pages/admin/Registrations";
 import Facultyauth from "./pages/Faculty/faculty_authentication";
 import Facultyotp from "./pages/Faculty/faculty_otp";
+
+
+
 function App() {
   return (
+
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
@@ -102,7 +106,8 @@ function App() {
            </Route>
         </Routes>
       </Router>
-    </ThemeProvider>
+      </ThemeProvider>
+      
   );
 }
 

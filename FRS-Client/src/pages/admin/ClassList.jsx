@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
   Grid, 
@@ -7,80 +8,82 @@ import {
   Typography, 
   Divider,
   Box,
+  CircularProgress
 } from '@mui/material';
 import { 
   School, 
   AccessTime, 
-  People, 
-  CheckCircleOutline,
-  HighlightOff,
+  People,  
   Phone,
   Email
 } from '@mui/icons-material';
 
-const classes = [
-  { 
-    id: 1, 
-    subject: 'Math', 
-    faculty: 'Dr. Smith', 
-    phone: '+1 (555) 123-4567',
-    email: 'smith@school.edu',
-    time: '10:00 AM', 
-    presents: 20, 
-    absents: 5, 
-    classFor: 'Sec : A' 
-  },
-  { 
-    id: 2, 
-    subject: 'Science', 
-    faculty: 'Dr. Jones', 
-    phone: '+1 (555) 234-5678',
-    email: 'jones@school.edu',
-    time: '11:00 AM', 
-    presents: 18, 
-    absents: 7, 
-    classFor: 'Sec : B' 
-  },
-  { 
-    id: 3, 
-    subject: 'History', 
-    faculty: 'Dr. Brown', 
-    phone: '+1 (555) 345-6789',
-    email: 'brown@school.edu',
-    time: '12:00 PM', 
-    presents: 22, 
-    absents: 3, 
-    classFor: 'Sec : C' 
-  },
-  { 
-    id: 4, 
-    subject: 'Art', 
-    faculty: 'Ms. Green', 
-    phone: '+1 (555) 456-7890',
-    email: 'green@school.edu',
-    time: '1:00 PM', 
-    presents: 15, 
-    absents: 10, 
-    classFor: 'Sec : D' 
-  }
-];
+const periodToTime = {
+  "p1": "08:30",
+  "p2": "09:30",
+  "p3": "10:40",
+  "p4": "11:40",  
+  "p5": "13:30",
+  "p6": "14:30",
+  "p7": "15:40",
+};
 
-const ClassCards = ({year}) => {
+const ClassCards = ({ year }) => {
+  const todayDate = new Date().toISOString().slice(0, 10);
   const navigate = useNavigate();
+  const [classes, setClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const getAttendancePercentage = (presents, absents) => {
-    const total = presents + absents;
-    return Math.round((presents / total) * 100);
+  useEffect(() => {
+    const fetchClasses = async () => {
+      try {
+        const response = await axios.post('http://127.0.0.1:8000/admin/Today_classes', {
+          today_date: todayDate,
+          year: year
+        });
+
+        const processedData = processClassData(response.data[year]);
+        setClasses(processedData);
+      } catch (error) {
+        console.error('Error fetching class data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchClasses();
+  }, [year, todayDate]);
+
+  const processClassData = (yearData) => {
+    if (!yearData) return [];
+
+    return Object.entries(yearData).flatMap(([section, subjects]) =>
+      Object.entries(subjects).flatMap(([subject, details]) =>
+        details.faculty.flatMap((faculty) =>
+          details.periods.map((period) => ({
+            subject,
+            faculty: faculty.faculty_name,
+            phone: faculty.faculty_phone,
+            email: faculty.email_address,
+            time: periodToTime[period],
+            classFor: `Sec: ${section}`
+          }))
+        )
+      )
+    );
   };
 
-  const getAttendanceColor = (percentage) => {
-    if (percentage >= 90) return '#e8f5e9';
-    if (percentage >= 75) return '#fff3e0';
-    return '#ffebee';
-  };
+  const handleCardClick = (classItem, index) => {
+    const currentTime = new Date();
+    const classTime = new Date();
+    const [hours, minutes] = classItem.time.split(':');
+    classTime.setHours(hours, minutes, 0);
 
-  const handleCardClick = (id) => {
-    navigate(`/admin/todayclasses/${year}/${id}`);
+    if (currentTime >= classTime) {
+      navigate(`/admin/todayclasses/details?year=${year}&date=${todayDate}&section=${classItem.classFor.replace("Sec: ", "").trim()}&subject=${classItem.subject}`);
+    } else {
+      alert(`The class for ${classItem.subject} is scheduled at ${classItem.time} and is not yet completed.`);
+    }
   };
 
   return (
@@ -91,16 +94,19 @@ const ClassCards = ({year}) => {
         fontWeight="bold"
         color="#1a237e"
       >
-        {`${year} class details`}
+        {`${year} Class Details`}
       </Typography>
-      <Grid container spacing={2} sx={{ padding: '16px' }}>
-        {classes.map((classItem) => {
-          const attendancePercent = getAttendancePercentage(classItem.presents, classItem.absents);
-          
-          return (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={classItem.id}>
+
+      {loading ? (
+        <Box display="flex" justifyContent="center" mt={3}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Grid container spacing={2} sx={{ padding: '16px' }}>
+          {classes.map((classItem, index) => (
+            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
               <Card 
-                onClick={() => handleCardClick(classItem.id)}
+                onClick={() => handleCardClick(classItem, index)}
                 sx={{
                   height: '100%',
                   maxWidth: 280,
@@ -152,13 +158,9 @@ const ClassCards = ({year}) => {
                         {classItem.phone}
                       </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Email sx={{ color: '#666' }} />
-                      <Typography variant="body2" color="text.secondary" sx={{ 
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap'
-                      }}>
+                      <Typography variant="body2" color="text.secondary">
                         {classItem.email}
                       </Typography>
                     </Box>
@@ -169,45 +171,12 @@ const ClassCards = ({year}) => {
                       </Typography>
                     </Box>
                   </Box>
-
-                  <Box 
-                    sx={{ 
-                      bgcolor: getAttendanceColor(attendancePercent),
-                      borderRadius: '8px',
-                      p: 1.5,
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          <CheckCircleOutline sx={{ color: '#4caf50', fontSize: '1rem' }} />
-                          <Typography variant="body2">
-                            Present: {classItem.presents}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <HighlightOff sx={{ color: '#f44336', fontSize: '1rem' }} />
-                          <Typography variant="body2">
-                            Absent: {classItem.absents}
-                          </Typography>
-                        </Box>
-                      </Box>
-                      <Box sx={{ textAlign: 'right' }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                          {attendancePercent}%
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Attendance
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </Box>
                 </CardContent>
               </Card>
             </Grid>
-          );
-        })}
-      </Grid>
+          ))}
+        </Grid>
+      )}
     </Box>
   );
 };

@@ -10,6 +10,16 @@ import { Typography, TextField } from "@mui/material";
 import theme from "../../utils/Theme";
 import ClassList from "./ClassList";
 
+const periodToTime = {
+  "p1": "8:30-9:30",
+  "p2": "9:30-10:30",
+  "p3": "10:40-11:40",
+  "p4": "11:40-12:40",  
+  "p5": "1:30-2:30",
+  "p6": "2:30-3:30",
+  "p7": "3:40-4:40",
+}
+
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -44,10 +54,10 @@ const ManageClasses = () => {
   const location = useLocation(); // To get the current URL path
 
   const years = [
-    { year: "1st Year", value: "e1" },
-    { year: "2nd Year", value: "e2" },
-    { year: "3rd Year", value: "e3" },
-    { year: "4th Year", value: "e4" },
+    { year: "1st Year", value: "E1" },
+    { year: "2nd Year", value: "E2" },
+    { year: "3rd Year", value: "E3" },
+    { year: "4th Year", value: "E4" },
   ];
 
   const [selectedDate, setSelectedDate] = React.useState(new Date().toISOString().split('T')[0]);

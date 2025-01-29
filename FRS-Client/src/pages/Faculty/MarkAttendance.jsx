@@ -121,6 +121,7 @@ const MarkAttendance = () => {
   const [presentStudents, setPresentStudents] = useState([]);
   const [absentStudents, setAbsentStudents] = useState([]);
   const [recentlyMoved, setRecentlyMoved] = useState(null);
+  const [captureInterval, setCaptureInterval] = useState(null);
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -166,6 +167,9 @@ const MarkAttendance = () => {
     if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
+    if (captureInterval) {
+      clearInterval(captureInterval);
+    }
   };
 
   const captureFrame = () => {
@@ -179,29 +183,27 @@ const MarkAttendance = () => {
     
     const frameDataUrl = canvas.toDataURL('image/jpeg');
     setCapturedFrames(prev => [...prev, frameDataUrl]);
+    setFrameCount(prev => prev + 1);
   };
 
   const handleStartCapture = async () => {
     await startCamera();
     setIsCapturing(true);
     setCapturedFrames([]);
+    setFrameCount(0);
     
-    const interval = setInterval(() => {
-      setFrameCount(prev => {
-        if (prev >= 5) {
-          clearInterval(interval);
-          handleCaptureComplete();
-          return 5;
-        }
-        captureFrame();
-        return prev + 1;
-      });
-    }, 1000);
+    const interval = setInterval(captureFrame, 1000);
+    setCaptureInterval(interval);
   };
 
-  const handleCaptureComplete = () => {
+  
+  const handleStopCapture = () => {
     setIsCapturing(false);
+    if(captureInterval){
+      clearInterval(captureInterval);
+    }
     stopCamera();
+
     setTimeout(() => {
       const presentIds = new Set(allStudents
         .sort(() => 0.5 - Math.random())
@@ -217,7 +219,7 @@ const MarkAttendance = () => {
 
   const handleReset = () => {
     setActiveStep(0);
-    setFrameCount(1);
+    setFrameCount(0);
     setIsCapturing(false);
     setAttendanceProcessed(false);
     setPresentStudents([]);
@@ -373,7 +375,7 @@ const MarkAttendance = () => {
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
                       }}>
                         <Typography color="primary">
-                          Frame {frameCount}/5
+                          Frames:Captured {frameCount}
                         </Typography>
                         <LinearProgress
                           variant="determinate"
@@ -395,21 +397,43 @@ const MarkAttendance = () => {
                       {cameraError}
                     </Alert>
                   )}
-                  
-                  <Button
-                    variant="contained"
-                    onClick={handleStartCapture}
-                    disabled={isCapturing}
-                    startIcon={<PhotoCamera />}
-                    size="large"
-                    sx={{
-                      px: 4,
-                      py: 1.5,
-                      fontSize: '1.1rem'
-                    }}
-                  >
-                    Start Capture
-                  </Button>
+
+                  <Box sx = {{display: "flex", gap:2}}  >
+                    {! isCapturing ? (
+                      <Button
+                      variant="contained"
+                      
+                      onClick={handleStartCapture}
+                      disabled={isCapturing}
+                      startIcon={<PhotoCamera />}
+                      size="large"
+                      sx={{
+                        px: 4,
+                        py: 1.5,
+                        fontSize: '1.1rem',
+                        background: 'linear-gradient(45deg, #2196f3 30%, #2196f3 90%)',
+                                '&:hover': {
+                        background: 'linear-gradient(45deg, #1976d2 30%, #1976d2 90%'
+                      }}}
+                     >
+                     Start Capture
+                     </Button>
+                    ):(<Button
+                      variant="contained"
+                      onClick={handleStopCapture}
+                      color="secondary"
+                      startIcon={<CheckIcon />}
+                      size="large"
+                      sx={{
+                        px: 4,
+                        py: 1.5,
+                        fontSize: '1.1rem'
+                      }}
+                    >
+                      Stop Capture
+                    </Button>)
+                  }
+                  </Box>
                 </Box>
               </CardContent>
             </Card>

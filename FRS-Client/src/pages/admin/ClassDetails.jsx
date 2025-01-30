@@ -1,4 +1,4 @@
-import React, { useState , useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   Typography,
@@ -27,7 +27,7 @@ import {
   HowToReg,
   School,
 } from "@mui/icons-material";
-import axios from "axios"; // Importing Axios
+import { authtoken } from "../../GetAuthToken";
 
 // Dummy data with 40 students added
 const classDetails = {
@@ -55,17 +55,20 @@ const classDetails = {
   ],
 };
 
-
 const ClassDetails = () => {
   const { year, classId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const queryParams = new URLSearchParams(location.search);
-  const urlYear = queryParams.get("year");
-  const date = queryParams.get("date");
-  const section = queryParams.get("section");
-  const subject = queryParams.get("subject");
+  const urlParams = new URLSearchParams(location.search);
+  const encodedData = urlParams.get("data");
+  const decodedData = JSON.parse(atob(encodedData));
+  const urlYear = decodedData.year;
+  const date = decodedData.date;
+  const section = decodedData.section;
+  const subject = decodedData.subject;
+  const faculty = decodedData.faculty;
+  const class_time = decodedData.time;
 
   // State for student data
   const [students, setStudents] = useState([]);
@@ -80,19 +83,31 @@ const ClassDetails = () => {
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const response = await axios.post("http://127.0.0.1:8000/admin/class-attendance", {
-          // year: urlYear || "E1", // Use year from query or default
-          // date: date || "2024-12-24", // Default date if not provided
-          // section: section || "A", // Default section if not provided
-          // subject: subject || "DM", // Default subject if not provided
+        const response = await fetch(
+          "http://127.0.0.1:8000/admin/class-attendance",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${authtoken}`,
+            },
+            body: JSON.stringify({
+              "year": "E1",
+              "date": "2024-12-24",
+              "section": "A",
+              "subject": "DM"
+            })
+          }
+        );
 
-          year: "E1", // Use year from query or default
-          date: "2024-12-24", // Default date if not provided
-          section: "A", // Default section if not provided
-          subject: "DM", // Default subject if not provided
-        });
+        // year: urlYear || "E1", // Use year from query or default
+        // date: date || "2024-12-24", // Default date if not provided
+        // section: section || "A", // Default section if not provided
+        // subject: subject || "DM", // Default subject if not provided
 
-        const { presenties, absenties } = response.data;
+        const data = await response.json();
+        console.log(data);
+        const { presenties, absenties } = data;
 
         // Update state with present and absent student IDs
         setPresentCount(presenties.length);
@@ -103,7 +118,7 @@ const ClassDetails = () => {
           ...presenties.map((id) => ({ id, status: "present" })),
           ...absenties.map((id) => ({ id, status: "absent" })),
         ];
-        
+
         setStudents(allStudents);
       } catch (error) {
         console.error("Error fetching attendance data", error);
@@ -131,20 +146,39 @@ const ClassDetails = () => {
     setOpenDialog(false);
   };
 
-  const presentStudents = students.filter((student) => student.status === "present");
-  const absentStudents = students.filter((student) => student.status === "absent");
+  const presentStudents = students.filter(
+    (student) => student.status === "present"
+  );
+  const absentStudents = students.filter(
+    (student) => student.status === "absent"
+  );
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4, backgroundColor: "#f9fafb", minHeight: "100vh" }}>
+    <Container
+      maxWidth="xl"
+      sx={{ py: 4, backgroundColor: "#f9fafb", minHeight: "100vh" }}
+    >
       {/* Header Section */}
-      <Paper elevation={3} sx={{ p: 2, mb: 2, backgroundColor: "#000000", color: "white", borderRadius: "12px", height: "350px" }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 2,
+          mb: 2,
+          backgroundColor: "rgba(158, 210, 253, 0.19)",
+          color: "black",
+          borderRadius: "12px",
+        }}
+      >
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <IconButton onClick={handleBackClick} sx={{ mr: 2, color: "white" }}>
             <ArrowBack sx={{ fontSize: 28 }} />
           </IconButton>
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <School sx={{ fontSize: 30, color: "#ffca28" }} />
-            <Typography variant="h4" sx={{ fontWeight: "bold", fontSize: "1.6rem" }}>
+            <Typography
+              variant="h4"
+              sx={{ fontWeight: "bold", fontSize: "1.6rem" }}
+            >
               {subject} Class
             </Typography>
           </Box>
@@ -154,8 +188,12 @@ const ClassDetails = () => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Person sx={{ fontSize: 24, color: "#ffca28" }} />
               <Box>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>Faculty</Typography>
-                <Typography variant="h6" sx={{ fontSize: "1rem" }}>Dr. Smith</Typography>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  Faculty
+                </Typography>
+                <Typography variant="h6" sx={{ fontSize: "1rem" }}>
+                  {faculty}
+                </Typography>
               </Box>
             </Box>
           </Grid>
@@ -163,8 +201,12 @@ const ClassDetails = () => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <AccessTime sx={{ fontSize: 24, color: "#ffca28" }} />
               <Box>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>Time</Typography>
-                <Typography variant="h6" sx={{ fontSize: "1rem" }}>10:00 AM</Typography>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  Time
+                </Typography>
+                <Typography variant="h6" sx={{ fontSize: "1rem" }}>
+                  {class_time}
+                </Typography>
               </Box>
             </Box>
           </Grid>
@@ -172,8 +214,12 @@ const ClassDetails = () => {
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Class sx={{ fontSize: 24, color: "#ffca28" }} />
               <Box>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>Section</Typography>
-                <Typography variant="h6" sx={{ fontSize: "1rem" }}>A</Typography>
+                <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                  Section
+                </Typography>
+                <Typography variant="h6" sx={{ fontSize: "1rem" }}>
+                  {section}
+                </Typography>
               </Box>
             </Box>
           </Grid>
@@ -183,15 +229,57 @@ const ClassDetails = () => {
       {/* Attendance Summary */}
       <Grid container spacing={2} sx={{ mb: 4 }}>
         <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2, backgroundColor: "#c8e6c9", borderRadius: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", height: "80px" }}>
-            <Typography variant="h6" sx={{ fontSize: "1.5rem" }}>Present Students</Typography>
-            <Chip icon={<CheckCircle sx={{ fontSize: 20 }} />} label={presentCount} color="success" sx={{ height: 35, "& .MuiChip-label": { fontSize: "1.2rem", px: 2 } }} />
+          <Paper
+            elevation={3}
+            sx={{
+              p: 2,
+              backgroundColor: "#c8e6c9",
+              borderRadius: "12px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              height: "80px",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontSize: "1.5rem" }}>
+              Present Students
+            </Typography>
+            <Chip
+              icon={<CheckCircle sx={{ fontSize: 20 }} />}
+              label={presentCount}
+              color="success"
+              sx={{
+                height: 35,
+                "& .MuiChip-label": { fontSize: "1.2rem", px: 2 },
+              }}
+            />
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2, backgroundColor: "#ffcdd2", borderRadius: "12px", display: "flex", justifyContent: "space-between", alignItems: "center", height: "80px" }}>
-            <Typography variant="h6" sx={{ fontSize: "1.5rem" }}>Absent Students</Typography>
-            <Chip icon={<Cancel sx={{ fontSize: 20 }} />} label={absentCount} color="error" sx={{ height: 35, "& .MuiChip-label": { fontSize: "1.2rem", px: 2 } }} />
+          <Paper
+            elevation={3}
+            sx={{
+              p: 2,
+              backgroundColor: "#ffcdd2",
+              borderRadius: "12px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              height: "80px",
+            }}
+          >
+            <Typography variant="h6" sx={{ fontSize: "1.5rem" }}>
+              Absent Students
+            </Typography>
+            <Chip
+              icon={<Cancel sx={{ fontSize: 20 }} />}
+              label={absentCount}
+              color="error"
+              sx={{
+                height: 35,
+                "& .MuiChip-label": { fontSize: "1.2rem", px: 2 },
+              }}
+            />
           </Paper>
         </Grid>
       </Grid>
@@ -227,7 +315,7 @@ const ClassDetails = () => {
                   sx={{
                     display: "flex",
                     justifyContent: "space-between",
-                    alignItems:"center",
+                    alignItems: "center",
                     py: 1,
                   }}
                 >
@@ -235,7 +323,7 @@ const ClassDetails = () => {
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
-                      alignItems:"center",
+                      alignItems: "center",
                       width: "100%",
                     }}
                   >
@@ -243,7 +331,6 @@ const ClassDetails = () => {
                       variant="h6"
                       sx={{
                         fontSize: "1rem",
-                        
                       }}
                     >
                       ID: {student.id}
@@ -294,9 +381,20 @@ const ClassDetails = () => {
                     py: 1,
                   }}
                 >
-                  <Box sx={{width:"80%" ,display: "flex",justifyContent:"space-between" , alignItems: "center", gap: 6 }}>
-                    <Typography variant="h6" sx={{ fontSize: "1rem" , display:"flex",}}>
-                    ID: {student.id}
+                  <Box
+                    sx={{
+                      width: "80%",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      sx={{ fontSize: "1rem", display: "flex" }}
+                    >
+                      ID: {student.id}
                     </Typography>
                     {/* <Typography
                       variant="h6"

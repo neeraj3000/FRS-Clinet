@@ -5,9 +5,11 @@ export default function AdminDashBoard() {
   const drawerItems = [
     "Dashboard",
     "Today Classes",
+    "Assign Faculty",
     "Register Students",
     "View Students",
     "Manage Faculty",
+    "Time Table",
     "Student Visualisation",
 
   ];

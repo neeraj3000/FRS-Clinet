@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Announcement, Groups } from '@mui/icons-material';
 import { List, ListItem, ListItemText } from '@mui/material';
-
+import { authtoken } from '../../GetAuthToken';
 
 const AdminDashboard = () => {
   const [greeting, setGreeting] = useState('');
@@ -28,8 +28,16 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchAttendanceData = async () => {
+      console.log(authtoken)
       try {
-        const response = await fetch('http://127.0.0.1:8000/admin/dashboard');
+        const response = await fetch('http://127.0.0.1:8000/admin/dashboard',{
+          headers:{
+            'Content-Type': 'application/json',
+            "Authorization":`Bearer ${authtoken}`
+          }
+        });
+
+        console.log(response)
         if (!response.ok) throw new Error('Failed to fetch data');
         
         const data = await response.json();

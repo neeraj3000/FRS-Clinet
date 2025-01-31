@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Paper, Typography, IconButton, Grid, FormControl, Select, MenuItem } from '@mui/material';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
@@ -11,16 +11,28 @@ const MonthCalendar = ({ currentDate, attendanceData, selectedSubject }) => {
     return { startingDay: firstDay.getDay(), totalDays: lastDay.getDate() };
   };
 
-  const getAttendanceColor = (date) => {
+  const getAttendanceInfo = (date) => {
     const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
     const dayAttendance = attendanceData[dateStr];
     
-    if (!dayAttendance || !dayAttendance[selectedSubject]) return '#f5f5f5';
+    if (!dayAttendance || !dayAttendance[selectedSubject]) {
+      return { color: '#f5f5f5', periods: null };
+    }
     
-    const status = dayAttendance[selectedSubject];
-    if (status === 'present') return 'rgba(76, 175, 80, 0.4)';
-    if (status === 'absent') return 'rgba(239, 83, 80, 0.4)';
-    return 'rgba(255, 183, 77, 0.4)';
+    const attendance = dayAttendance[selectedSubject];
+    
+    if (attendance.type === 'consolidated') {
+      return {
+        color: 'rgba(156, 39, 176, 0.4)', // Purple for consolidated
+        periods: attendance.periods,
+        reason: attendance.reason
+      };
+    }
+
+    return {
+      color: attendance.status === 'present' ? 'rgba(76, 175, 80, 0.4)' : 'rgba(239, 83, 80, 0.4)',
+      periods: attendance.periods
+    };
   };
 
   const { startingDay, totalDays } = getMonthData();
@@ -43,19 +55,42 @@ const MonthCalendar = ({ currentDate, attendanceData, selectedSubject }) => {
         {Array.from({ length: weeks * 7 }).map((_, index) => {
           const day = index - startingDay + 1;
           const isValidDay = day > 0 && day <= totalDays;
+          const attendanceInfo = isValidDay ? getAttendanceInfo(day) : null;
+          
           return (
             <Grid item xs={12/7} key={index}>
-              <Box sx={{
-                aspectRatio: '1',
-                backgroundColor: isValidDay ? getAttendanceColor(day) : 'transparent',
-                borderRadius: 0.5,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1rem',
-                fontWeight: '500',
-              }}>
-                {isValidDay && day}
+              <Box 
+                sx={{
+                  aspectRatio: '1',
+                  backgroundColor: isValidDay ? attendanceInfo.color : 'transparent',
+                  borderRadius: 0.5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  position: 'relative',
+                  cursor: attendanceInfo?.reason ? 'help' : 'default',
+                }}
+                title={attendanceInfo?.reason || ''}
+              >
+                {isValidDay && (
+                  <>
+                    <Typography variant="caption" sx={{ fontWeight: '500' }}>{day}</Typography>
+                    {attendanceInfo.periods && (
+                      <Typography 
+                        variant="caption" 
+                        sx={{ 
+                          fontSize: '0.6rem',
+                          position: 'absolute',
+                          bottom: '2px',
+                          right: '2px'
+                        }}
+                      >
+                        {attendanceInfo.periods}
+                      </Typography>
+                    )}
+                  </>
+                )}
               </Box>
             </Grid>
           );
@@ -66,7 +101,8 @@ const MonthCalendar = ({ currentDate, attendanceData, selectedSubject }) => {
 };
 
 const AttendanceCalendar = ({ attendanceData }) => {
-  const [baseDate, setBaseDate] = useState(new Date());
+  console.log(attendanceData)
+  const [baseDate, setBaseDate] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState('');
 
   const getAllSubjects = () => {
@@ -77,6 +113,17 @@ const AttendanceCalendar = ({ attendanceData }) => {
     return Array.from(subjects);
   };
 
+  // Find the earliest date in the attendance data
+  useEffect(() => {
+    if (attendanceData) {
+      const dates = Object.keys(attendanceData).sort();
+      if (dates.length > 0) {
+        const earliestDate = new Date(dates[0]);
+        setBaseDate(earliestDate);
+      }
+    }
+  }, [attendanceData]);
+
   const handlePreviousMonths = () => {
     setBaseDate(new Date(baseDate.setMonth(baseDate.getMonth() - 3)));
   };
@@ -86,21 +133,32 @@ const AttendanceCalendar = ({ attendanceData }) => {
   };
 
   const handleSubjectChange = (event) => {
-    setSelectedSubject(event.target.value);
+    const newSubject = event.target.value;
+    setSelectedSubject(newSubject);
+    
+    // Find the earliest date for the selected subject
+    const datesForSubject = Object.keys(attendanceData)
+      .filter(date => attendanceData[date][newSubject]);
+    
+    if (datesForSubject.length > 0) {
+      const earliestDate = new Date(datesForSubject.sort()[0]);
+      setBaseDate(earliestDate);
+    }
   };
+  
 
   const subjects = getAllSubjects();
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!selectedSubject && subjects.length > 0) {
       setSelectedSubject(subjects[0]);
     }
   }, [subjects]);
 
+  if (!baseDate) return null;
+
   return (
     <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
-      {/* <Typography variant="h6" sx={{ mb: 2, textAlign: 'center' }}>Attendance Calendar</Typography> */}
-      
       <Box sx={{ display: 'flex', gap: 3 }}>
         {/* Side Navigation */}
         <Box sx={{ 
@@ -128,7 +186,7 @@ const AttendanceCalendar = ({ attendanceData }) => {
             {[
               { color: 'rgba(76, 175, 80, 0.4)', label: 'Present' },
               { color: 'rgba(239, 83, 80, 0.4)', label: 'Absent' },
-              { color: 'rgba(255, 183, 77, 0.4)', label: 'Partial/Late' }
+              { color: 'rgba(156, 39, 176, 0.4)', label: 'Consolidated' }
             ].map(({ color, label }) => (
               <Box key={label} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                 <Box sx={{ width: 12, height: 12, backgroundColor: color, borderRadius: 0.5 }} />

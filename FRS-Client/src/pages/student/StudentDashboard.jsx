@@ -2,61 +2,37 @@ import React, { useEffect, useState } from "react";
 import AttendanceBarChart from "../../components/StudentDashboard/AttendanceBarChart";
 import ProgressIndicator from "../../components/StudentDashboard/ProgressIndicator";
 import SubjectCard from "../../components/StudentDashboard/SubjectCard";
-import { Box, Grid, Typography, Paper } from "@mui/material";
+import { Box, Grid, Typography, Paper, IconButton } from "@mui/material";
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import AttendaceHeatmap from "../../components/AttedanceHeatmap";
+import { headers } from "../../GetAuthToken";
 
 const StudentDashboard = () => {
-  const [subjects, setSubjects] = useState([]);
-  const [attendanceSummary, setAttendanceSummary] = useState(null);
-  const [studentId, setStudentId] = useState("");
+  const [studentData, setStudentData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const location = useLocation();
+  const urlParams = new URLSearchParams(location.search);
+  const year = urlParams.get("year");
+  const { studentId } = useParams();
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchStudentDashboard = async () => {
+    const fetchStudentData = async () => {
       try {
-        setLoading(true);
-        const token = localStorage.getItem("token"); // Assuming the token is stored in localStorage
-        console.log(token);
-        if (!token) {
-          throw new Error("Authentication token not found. Please log in.");
-        }
-
-        // Fetch data from backend
-        const response = await fetch("http://127.0.0.1:8000/student/attendance", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
+        const response = await fetch(
+          `http://127.0.0.1:8000/student/attendance`,
+          { headers }
+        );
+        
         if (!response.ok) {
-          throw new Error("Failed to fetch student dashboard data");
+          throw new Error('Failed to fetch student data');
         }
-
-        const result = await response.json();
-        console.log("Student Dashboard Data:", result);
-
-        // Extract and set student ID
-        setStudentId(result.studentId);
-
-        // Transform `attendance_summary` for visualization
-        const transformedSubjects = Object.entries(result.attendance_summary)
-          .filter(([key]) => key !== "total") // Exclude total summary
-          .map(([subject, details]) => ({
-            name: subject,
-            total: details.num_classes,
-            attended: details.num_present,
-            absent: details.num_classes - details.num_present,
-            percentage: details.percentage,
-          }));
-
-        setSubjects(transformedSubjects);
-
-        // Set overall attendance summary (convert numbers to strings)
-        setAttendanceSummary({
-          num_classes: String(result.attendance_summary.total.total_classes),
-          num_present: String(result.attendance_summary.total.total_present),
-          percentage: result.attendance_summary.total.percentage,
-        });
+        
+        const data = await response.json();
+        setStudentData(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -64,78 +40,114 @@ const StudentDashboard = () => {
       }
     };
 
-    fetchStudentDashboard();
-  }, []);
+    fetchStudentData();
+  }, [studentId, year]);
 
-  // Render loading state
-  if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
-  // Render error state
-  if (error) {
-    return <Typography color="error">{error}</Typography>;
-  }
+  const transformSubjectsForChart = (attendanceSummary) => {
+    if (!attendanceSummary) return [];
+    
+    return Object.entries(attendanceSummary)
+      .filter(([key]) => key !== 'total')
+      .map(([name, data]) => ({
+        name,
+        total: data.num_classes,
+        attended: data.num_present,
+        absent: data.num_classes - data.num_present
+      }));
+  };
+
+  const transformAttendanceForHeatmap = (attendanceReport) => {
+    if (!attendanceReport) return {};
+    
+    const heatmapData = {};
+    
+    Object.entries(attendanceReport).forEach(([subject, data]) => {
+      data.attendance?.forEach(entry => {
+        const dateStr = entry.date;
+        if (!heatmapData[dateStr]) {
+          heatmapData[dateStr] = {};
+        }
+        heatmapData[dateStr][subject] = {
+          status: entry.status,
+          periods: entry.number_of_periods
+        };
+      });
+  
+      data.consolidated_attendance?.forEach(consolidatedEntry => {
+        consolidatedEntry.dates.forEach(date => {
+          if (!heatmapData[date]) {
+            heatmapData[date] = {};
+          }
+          heatmapData[date][subject] = {
+            type: 'consolidated',
+            periods: consolidatedEntry.number_of_periods,
+            reason: consolidatedEntry.reason
+          };
+        });
+      });
+    });
+    
+    return heatmapData;
+  };
+
+  if (loading) return <Typography>Loading...</Typography>;
+  if (error) return <Typography color="error">Error: {error}</Typography>;
+  if (!studentData) return <Typography>No data available</Typography>;
+
+  const subjects = transformSubjectsForChart(studentData.attendance_summary);
+  const attendanceHeatmapData = transformAttendanceForHeatmap(studentData.attendance_report);
 
   return (
-    <Box
-      sx={{
-        padding: { xs: 2, sm: 4 },
-        minHeight: "100vh",
-      }}
-    >
-      {/* Header with Student ID */}
-      <Typography
-        variant="h3"
-        sx={{
-          fontWeight: "800",
-          color: "#1a237e",
-          mb: 4,
-          textAlign: { xs: "center", sm: "left" },
-        }}
-      >
-        {studentId} Student Dashboard
+    <Box sx={{
+      padding: { xs: 2, sm: 4 },
+      minHeight: "100vh",
+      backgroundColor: "#f5f5f5"
+    }}>
+      <Typography variant="h3" sx={{
+        fontWeight: "800",
+        color: "#1a237e",
+        mb: 4,
+        textAlign: { xs: "center", sm: "left" },
+      }}>
+        <IconButton onClick={handleBackClick} sx={{ margin:"0px 20px" }}>
+          <ArrowBackIcon sx={{ color: "#1a237e", fontSize: '2rem' }} />
+        </IconButton>
+        {studentId} Attendance Overview
       </Typography>
 
       <Grid container spacing={3}>
-        {/* Attendance Bar Chart */}
         <Grid item xs={12} md={8}>
-          <Paper
-            elevation={3}
-            sx={{
-              padding: { xs: 2, sm: 3 },
-              borderRadius: 2,
-              background: "white",
-            }}
-          >
+          <Paper elevation={3} sx={{
+            padding: { xs: 2, sm: 3 },
+            borderRadius: 2,
+            height: { xs: "auto", sm: "100%" },
+            background: "white",
+          }}>
             <AttendanceBarChart subjects={subjects} />
           </Paper>
         </Grid>
 
-        {/* Progress Indicator */}
         <Grid item xs={12} md={4}>
-          <Paper
-            elevation={3}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: { xs: 2, sm: 3 },
-              textAlign: "center",
-              borderRadius: 2,
-              minHeight: "100%",
-            }}
-          >
-            {attendanceSummary && (
-              <ProgressIndicator
-                totalClasses={Number(attendanceSummary.num_classes)}
-                attendedClasses={Number(attendanceSummary.num_present)}
-              />
-            )}
+          <Paper elevation={3} sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: { xs: 2, sm: 3 },
+            textAlign: "center",
+            borderRadius: 2,
+            minHeight: "100%",
+          }}>
+            <ProgressIndicator 
+              totalClasses={studentData.attendance_summary.total.total_classes} 
+              attendedClasses={studentData.attendance_summary.total.total_percentage} 
+            />
           </Paper>
         </Grid>
 
-        {/* Subject Cards */}
         <Grid item xs={12}>
           <Grid container spacing={3}>
             {subjects.map((subject, index) => (
@@ -149,6 +161,10 @@ const StudentDashboard = () => {
               </Grid>
             ))}
           </Grid>
+        </Grid>
+
+        <Grid item xs={12}>
+          <AttendaceHeatmap attendanceData={attendanceHeatmapData} />
         </Grid>
       </Grid>
     </Box>

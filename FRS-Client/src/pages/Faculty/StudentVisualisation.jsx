@@ -91,7 +91,7 @@ const AttendanceDashboard = ({ authtoken }) => {
       alert("Please select a year first");
       return;
     }
-    navigate(`/admin/studentvisualisation/${enteredID}?year=${selectedYear}`);
+    navigate(`/faculty/studentvisualisation/${enteredID}?year=${selectedYear}`);
   };
 
   const StatCard = ({ title, value, icon: Icon, color, isPercentage }) => (

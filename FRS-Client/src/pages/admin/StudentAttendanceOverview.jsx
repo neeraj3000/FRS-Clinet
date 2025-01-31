@@ -1,18 +1,14 @@
 import React from "react";
-import AttendanceChart from "../../components/StudentDashboard/AttendanceChart";
 import AttendanceBarChart from "../../components/StudentDashboard/AttendanceBarChart";
-
 import ProgressIndicator from "../../components/StudentDashboard/ProgressIndicator";
 import SubjectCard from "../../components/StudentDashboard/SubjectCard";
-import { Box, Grid, Typography, Paper, Card, CardContent, Avatar, Divider , IconButton } from "@mui/material";
+import { Box, Grid, Typography, Paper, Card, Avatar , IconButton } from "@mui/material";
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import SchoolIcon from '@mui/icons-material/School';
 import BadgeIcon from '@mui/icons-material/Badge';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-
-import { useNavigate,useParams } from "react-router-dom";
-
+import { useNavigate,useParams,useLocation } from "react-router-dom";
 import AttendaceHeatmap from "../../components/AttedanceHeatmap";
 
 const studentProfile = {
@@ -30,6 +26,10 @@ const studentProfile = {
 
 const StudentDashboard = () => {
   const { student } = studentProfile;
+  const location = useLocation();
+
+  const urlParams = new URLSearchParams(location.search);
+  const year = urlParams.get("year")
 
   const {studentId} = useParams()
   const navigate = useNavigate(); // Initialize useNavigate

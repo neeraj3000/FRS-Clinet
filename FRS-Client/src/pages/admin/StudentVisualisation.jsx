@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Box,
@@ -9,12 +9,14 @@ import {
   Paper,
   TextField,
   Button,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
   PieChart,
   Pie,
   XAxis,
@@ -27,83 +29,70 @@ import {
 } from "recharts";
 import SchoolIcon from "@mui/icons-material/School";
 import PercentIcon from "@mui/icons-material/Percent";
-
-const staticData = {
-  yearlyData: [
-    {
-      year: "E1",
-      totalStudents: 350,
-      averageAttendance: 85.35,
-      sections: [
-        { section: "A", attendance: 80.56 },
-        { section: "B", attendance: 78.92 },
-        { section: "C", attendance: 84.71 },
-        { section: "D", attendance: 89.45 },
-        { section: "E", attendance: 91.23 },
-      ],
-    },
-    {
-      year: "E2",
-      totalStudents: 350,
-      averageAttendance: 80.42,
-      sections: [
-        { section: "A", attendance: 75.56 },
-        { section: "B", attendance: 82.36 },
-        { section: "C", attendance: 78.43 },
-        { section: "D", attendance: 81.24 },
-        { section: "E", attendance: 85.67 },
-      ],
-    },
-    {
-      year: "E3",
-      totalStudents: 350,
-      averageAttendance: 82.78,
-      sections: [
-        { section: "A", attendance: 80.45 },
-        { section: "B", attendance: 85.91 },
-        { section: "C", attendance: 81.22 },
-        { section: "D", attendance: 79.64 },
-        { section: "E", attendance: 88.39 },
-      ],
-    },
-    {
-      year: "E4",
-      totalStudents: 350,
-      averageAttendance: 91.12,
-      sections: [
-        { section: "A", attendance: 90.45 },
-        { section: "B", attendance: 89.32 },
-        { section: "C", attendance: 91.56 },
-        { section: "D", attendance: 92.34 },
-        { section: "E", attendance: 93.87 },
-      ],
-    },
-  ],
-  weeklyTrend: [
-    { day: "Mon", attendance: 85.34 },
-    { day: "Tue", attendance: 82.45 },
-    { day: "Wed", attendance: 88.56 },
-    { day: "Thu", attendance: 86.76 },
-    { day: "Fri", attendance: 84.12 },
-    { day: "Sat", attendance: 80.45 },
-    { day: "Sun", attendance: 75.67 },
-  ],
-};
+import { headers } from "../../GetAuthToken";
 
 const COLORS = ["#1976d2", "#2e7d32", "#ed6c02", "#9c27b0", "#d32f2f"];
 
-const AttendanceDashboard = () => {
-  const [data] = useState(staticData);
+const AttendanceDashboard = ({ authtoken }) => {
+  const [data, setData] = useState(null);
   const [enteredID, setEnteredID] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
   const navigate = useNavigate();
+
+  // Fetch data from the backend API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/admin/visualize-attendance", {
+          method: 'GET',
+          headers
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const apiData = await response.json();
+
+        const mappedData = {
+          yearlyData: Object.keys(apiData).map((yearKey) => ({
+            year: yearKey,
+            totalStudents: apiData[yearKey].total_students,
+            averageAttendance: apiData[yearKey].total_percentage,
+            sections: [
+              { section: "A", attendance: apiData[yearKey].A },
+              { section: "B", attendance: apiData[yearKey].B },
+              { section: "C", attendance: apiData[yearKey].C },
+              { section: "D", attendance: apiData[yearKey].D },
+              { section: "E", attendance: apiData[yearKey].E },
+            ],
+          })),
+        };
+
+        setData(mappedData);
+      } catch (error) {
+        console.error("Error fetching attendance data:", error);
+      }
+    };
+
+    fetchData();
+  }, [authtoken]);
+
+  const handleYearChange = (event) => {
+    setSelectedYear(event.target.value);
+  };
 
   const handleIDChange = (e) => {
     setEnteredID(e.target.value);
   };
 
   const handleSearch = () => {
+    if (!selectedYear) {
+      alert("Please select a year first");
+      return;
+    }
     const cleanedID = enteredID.replace("R", "");
-    navigate(`/admin/studentvisualisation/${cleanedID}`);
+    navigate(`/admin/studentvisualisation/${cleanedID}?year=${selectedYear}`);
   };
 
   const StatCard = ({ title, value, icon: Icon, color, isPercentage }) => (
@@ -123,12 +112,15 @@ const AttendanceDashboard = () => {
       </CardContent>
     </Card>
   );
-  
 
   const handleYearClick = (year) => {
     year = year.charAt(0).toLowerCase() + year.slice(1);
     navigate(`/admin/todayclasses/${year}`);
   };
+
+  if (!data) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <Box sx={{ p: 3 }}>
@@ -147,6 +139,23 @@ const AttendanceDashboard = () => {
         </Typography>
 
         <Box display="flex" gap={1}>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel>Select Year</InputLabel>
+            <Select
+              value={selectedYear}
+              label="Select Year"
+              onChange={handleYearChange}
+              sx={{
+                backgroundColor: "white",
+                borderRadius: 2,
+              }}
+            >
+              <MenuItem value="E1">E1</MenuItem>
+              <MenuItem value="E2">E2</MenuItem>
+              <MenuItem value="E3">E3</MenuItem>
+              <MenuItem value="E4">E4</MenuItem>
+            </Select>
+          </FormControl>
           <TextField
             type="text"
             value={enteredID}
@@ -208,13 +217,14 @@ const AttendanceDashboard = () => {
                   value={yearData.averageAttendance}
                   icon={PercentIcon}
                   color="#2e7d32"
+                  isPercentage
                 />
               </Grid>
             </Grid>
           </Grid>
         ))}
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={12}>
           <Paper elevation={3} sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Year-wise Average Attendance
@@ -253,47 +263,7 @@ const AttendanceDashboard = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Weekly Attendance Trend
-            </Typography>
-            <Box height={400}>
-              <ResponsiveContainer>
-                <LineChart data={data.weeklyTrend}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis
-                    dataKey="day"
-                    label={{
-                      value: "Day of the Week",
-                      position: "insideBottomRight",
-                      offset: -5,
-                    }}
-                  />
-                  <YAxis
-                    domain={[0, 100]}
-                    label={{
-                      value: "Attendance (%)",
-                      angle: -90,
-                      position: "insideCenter",
-                      dx: -15,
-                    }}
-                  />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="attendance"
-                    stroke="#2e7d32"
-                    name="Attendance (%)"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </Box>
-          </Paper>
-        </Grid>
-
-        {data.yearlyData.map((yearData, index) => (
+        {data.yearlyData.map((yearData) => (
           <Grid item xs={12} md={6} key={yearData.year}>
             <Paper
               elevation={3}

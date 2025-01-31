@@ -45,8 +45,12 @@ import MarkAttendance from "./pages/Faculty/MarkAttendance";
 import Registrations from "./pages/admin/Registrations";
 import Facultyauth from "./pages/Faculty/faculty_authentication";
 import Facultyotp from "./pages/Faculty/faculty_otp";
+import AssignFaculty from "./pages/admin/AssignFaculty";
+import TimetableTabs from "./pages/admin/TimeTableTabs";
+
 function App() {
   return (
+
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
@@ -69,29 +73,18 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="todayclasses/" element={<ManageClasses />} />
             <Route path="todayclasses/:year" element={<ManageClasses />} />
-            {/* <Route path="todayclasses/:year" element={<ClassList />} />  */}
-            <Route
-              path="todayclasses/:year/:classId"
-              element={<ClassDetails />}
-            />{" "}
-            {/* Use element instead of component */}
-            {/* Uncomment and adjust these routes as needed */}
-            {/* <Route path="todayclasses/e1" element={<E1Classes />} />
-            <Route path="todayclasses/e2" element={<E2Classes />} />
-            <Route path="todayclasses/e3" element={<E3Classes />} />
-            <Route path="todayclasses/e4" element={<E4Classes />} /> */}
+            <Route path="todayclasses/details" element={<ClassDetails />} /> 
+            <Route path="assignfaculty" element={<AssignFaculty />} /> 
+            <Route path="assignfaculty/:year" element={<AssignFaculty />} /> 
             <Route path="registerstudents" element={<StudentForm />} />
             <Route path="viewstudents" element={<Registrations />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
             <Route path="managefaculty/:year" element={<ManageFaculty />} />
-            <Route
-              path="studentvisualisation"
-              element={<StudentVisualisation />}
-            />
-            <Route
-              path="studentvisualisation/:studentId"
-              element={<StudentAttendaceOverview />}
-            />
+            <Route path="timetable" element={<TimetableTabs />} />
+            <Route path="timetable/:year" element={<TimetableTabs />} />
+
+            <Route path="studentvisualisation" element={<StudentVisualisation />} />
+            <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />
             <Route path="profile" element={<AdminProfile />} />
           </Route>
           <Route path="/faculty" element={<Faculty />}>
@@ -116,7 +109,8 @@ function App() {
           </Route>
         </Routes>
       </Router>
-    </ThemeProvider>
+      </ThemeProvider>
+      
   );
 }
 

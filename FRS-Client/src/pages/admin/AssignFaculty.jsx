@@ -8,7 +8,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Typography, TextField } from "@mui/material";
 
 import theme from "../../utils/Theme";
-import FcaultyList from "../admin/FacultyList"
+import AssignFacultyList from "./AssignFacultyList"
+
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -39,16 +41,15 @@ function a11yProps(index) {
   };
 }
 
-const ManageClasses = () => {
+const AssignFaculty = () => {
   const navigate = useNavigate();
   const location = useLocation(); // To get the current URL path
 
   const years = [
-    {year : "all Years",value:"all"},
-    { year: "1st Year", value: "e1" },
-    { year: "2nd Year", value: "e2" },
-    { year: "3rd Year", value: "e3" },
-    { year: "4th Year", value: "e4" },
+    { year: "1st Year", value: "E1" },
+    { year: "2nd Year", value: "E2" },
+    { year: "3rd Year", value: "E3" },
+    { year: "4th Year", value: "E4" },
   ];
 
   const [selectedDate, setSelectedDate] = React.useState(new Date().toISOString().split('T')[0]);
@@ -64,12 +65,13 @@ const ManageClasses = () => {
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
-    navigate(`/admin/managefaculty/${years[newValue].value}`); // Update the URL based on the selected tab
+    navigate(`/admin/assignfaculty/${years[newValue].value}`); // Update the URL based on the selected tab
   };
 
   // Automatically update the tab if the URL changes
   React.useEffect(() => {
     setValue(getCurrentTabFromUrl());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]); // Update the active tab if the URL changes
 
   return (
@@ -88,10 +90,10 @@ const ManageClasses = () => {
           fontWeight="bold"
           color="#1a237e"
         >
-          Manage Faculty
+          Assign Faculty
         </Typography>
 
-        {/* <TextField
+        <TextField
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
@@ -104,7 +106,7 @@ const ManageClasses = () => {
           }}
           InputLabelProps={{ shrink: true }}
           label="Select Date"
-        /> */}
+        />
       </ Box>
       <Box sx={{ backgroundColor: "#f5f5f5" }}>
         <Tabs
@@ -153,7 +155,7 @@ const ManageClasses = () => {
       {years.map((item, index) => {
         return (
           <CustomTabPanel key={index} value={value} index={index}>
-            <FcaultyList year={item.value}></FcaultyList>
+            <AssignFacultyList year={item.value}></AssignFacultyList>
           </CustomTabPanel>
         );
       })}
@@ -161,4 +163,4 @@ const ManageClasses = () => {
   );
 };
 
-export default ManageClasses;
+export default AssignFaculty;

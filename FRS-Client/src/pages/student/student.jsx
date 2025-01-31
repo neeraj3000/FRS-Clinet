@@ -4,7 +4,8 @@ import SideBar from "../../components/SideBar";
 export default function Student() {
   const drawerItems = [
     "Dashboard",
-    
+    "Check Classes",
+    "TimeTable"
   ];
 
   const [open, setOpen] = useState(false);  // Keep drawer open by default

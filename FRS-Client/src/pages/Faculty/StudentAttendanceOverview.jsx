@@ -22,6 +22,7 @@ const StudentDashboard = () => {
   const year = urlParams.get("year");
   const { studentId } = useParams();
   const navigate = useNavigate();
+  console.log(studentId)
 
   useEffect(() => {
     const fetchStudentData = async () => {

@@ -27,17 +27,11 @@ import StudentAttendaceOverview from "./pages/admin/StudentAttendanceOverview"
 import Student from "./pages/student/student";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentProfile from "./pages/student/Profile";
-// import E1Classes from "./pages/admin/E1Classes";
-// import E2Classes from "./pages/admin/E2Classes";
-// import E3Classes from "./pages/admin/E3Classes";
-// import E4Classes from "./pages/admin/E4Classes"; 
-
 
 import theme from "./utils/Theme";
 
 import Dashboard from "./pages/Faculty/DashBoard";
 import Profile from "./pages/Faculty/Profile";
-import Settings from "./pages/Faculty/settings";
 // import FacultyLayout from "./pages/Faculty/Faculty_Layout";
 import Faculty from "./pages/Faculty/faculty";
 import ClassesList from "./pages/Faculty/ClassesList";
@@ -46,7 +40,12 @@ import Registrations from "./pages/admin/Registrations";
 import Facultyauth from "./pages/Faculty/faculty_authentication";
 import Facultyotp from "./pages/Faculty/faculty_otp";
 import AssignFaculty from "./pages/admin/AssignFaculty";
-import TimetableTabs from "./pages/admin/TimeTableTabs";
+import AdminTimetableTabs from "./pages/admin/TimeTableTabs";
+import FacultyTimeTableTabs from "./pages/Faculty/TimeTableTabs";
+import FacultyStudentAttendanceOverview from "./pages/Faculty/StudentAttendanceOverview";
+import FacultyStudentVisualisation from "./pages/Faculty/StudentVisualisation"
+import StudentTimeTableManager from "./pages/student/TimeTable";
+import ManageClassesList from "./pages/student/ManageClassesList";
 
 function App() {
   return (
@@ -58,14 +57,18 @@ function App() {
           {/* Login Route */}
           <Route path="/addstudent" element={<AddStudent />} />
 
-          <Route path="/" element={<LoginForm />} />
+          <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpFrom />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/setpassword" element={<Setpassword />} />
           {/* student Route */}
           <Route path="/student" element={<Student></Student>}>
             <Route path="dashboard" element={<StudentDashboard />} />
+            <Route path="timetable" element={<StudentTimeTableManager />} />
             <Route path="profile" element={<StudentProfile />} />
+            <Route path="checkclasses" element={<ManageClassesList />} />
+
+
           </Route>
           {/* Admin Routes */}
         
@@ -82,8 +85,8 @@ function App() {
             <Route path="viewstudents" element={<Registrations />} />
             <Route path="managefaculty" element={<ManageFaculty />} />
             <Route path="managefaculty/:year" element={<ManageFaculty />} />
-            <Route path="timetable" element={<TimetableTabs />} />
-            <Route path="timetable/:year" element={<TimetableTabs />} />
+            <Route path="timetable" element={<AdminTimetableTabs />} />
+            <Route path="timetable/:year" element={<AdminTimetableTabs />} />
 
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />
@@ -98,7 +101,9 @@ function App() {
              <Route path="todayclasses/:year/facultyauth/:Id/facultyotp" element={<Facultyotp />} />
              <Route path="todayclasses/:year/facultyauth/:Id/facultyotp/markattendance/:id" element={<MarkAttendance />} />
              <Route path="profile" element={<Profile />} />
-             <Route path="settings" element={<Settings />} />
+             <Route path="timetable" element={<FacultyTimeTableTabs />} />
+             <Route path="studentvisualisation/:studentId" element={<FacultyStudentAttendanceOverview />} />
+             <Route path="studentvisualisation" element={<FacultyStudentVisualisation />} />
              
 
            </Route>

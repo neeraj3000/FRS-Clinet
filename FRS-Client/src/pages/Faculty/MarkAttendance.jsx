@@ -51,7 +51,7 @@ const theme = createTheme({
 // Stats Component
 const AttendanceStats = ({ presentCount, totalCount }) => {
   const attendanceRate = ((presentCount / totalCount) * 100).toFixed(1);
-  
+
   return (
     <Card sx={{ mb: 3 }}>
       <CardContent>
@@ -71,7 +71,7 @@ const AttendanceStats = ({ presentCount, totalCount }) => {
               </Typography>
             </Box>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Box sx={{ textAlign: 'center', p: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
@@ -87,7 +87,7 @@ const AttendanceStats = ({ presentCount, totalCount }) => {
               </Typography>
             </Box>
           </Grid>
-          
+
           <Grid item xs={12} md={4}>
             <Box sx={{ textAlign: 'center', p: 2 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
@@ -122,6 +122,8 @@ const MarkAttendance = () => {
   const [absentStudents, setAbsentStudents] = useState([]);
   const [recentlyMoved, setRecentlyMoved] = useState(null);
   const [captureInterval, setCaptureInterval] = useState(null);
+  const [socket, setSocket] = useState(null);
+
 
   const videoRef = useRef(null);
   const streamRef = useRef(null);
@@ -140,10 +142,14 @@ const MarkAttendance = () => {
   useEffect(() => {
     return () => {
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
+        streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (socket) {
+        socket.close();
       }
     };
-  }, []);
+  }, [socket]);
+
 
   // Camera functions
   const startCamera = async () => {
@@ -155,20 +161,14 @@ const MarkAttendance = () => {
       }
       setCameraError(null);
     } catch (error) {
-      setCameraError('Unable to access camera. Please check permissions.');
-      console.error('Error accessing camera:', error);
+      setCameraError("Unable to access camera. Please check permissions.");
+      console.error("Error accessing camera:", error);
     }
   };
-
   const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-    if (captureInterval) {
-      clearInterval(captureInterval);
+    const stream = videoRef.current.srcObject;
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
     }
   };
 
@@ -176,46 +176,147 @@ const MarkAttendance = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
     const video = videoRef.current;
-    
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    const frameDataUrl = canvas.toDataURL('image/jpeg');
-    setCapturedFrames(prev => [...prev, frameDataUrl]);
-    setFrameCount(prev => prev + 1);
+    return canvas.toDataURL('image/jpeg', 0.5);
   };
 
-  const handleStartCapture = async () => {
-    await startCamera();
+  const handleStartCapture = () => {
+    startCamera();
     setIsCapturing(true);
-    setCapturedFrames([]);
-    setFrameCount(0);
-    
-    const interval = setInterval(captureFrame, 1000);
-    setCaptureInterval(interval);
+
+    const ws = new WebSocket("ws://127.0.0.1:8000:8000/ws");
+    setSocket(ws);
+
+    ws.onopen = () => {
+      console.log("WebSocket Connected");
+    };
+
+    ws.onmessage = (event) => {
+      const { faces } = JSON.parse(event.data);
+      drawFaceBoxes(faces);
+      storeAttendance(faces);
+    };
+    // const facultyId = localStorage.getItem('faculty_id');
+    // const year = localStorage.getItem('year');
+    // const branch = localStorage.getItem('branch');
+    // const section = localStorage.getItem('section');
+    const facultyId = '1';
+    const year = 'E1';
+    const branch = 'CSE';
+    const section = 'A';
+    setInterval(() => {
+      if (ws.readyState === WebSocket.OPEN) {
+        const frame = captureFrame();
+        ws.send(
+          JSON.stringify({
+            frame: frame,
+            faculty_id: "ankit.sharma@example.com",
+            year: year,
+            branch: branch,
+            section: section
+          })
+        );
+      }
+    }, 500);
+
   };
 
-  
   const handleStopCapture = () => {
     setIsCapturing(false);
-    if(captureInterval){
-      clearInterval(captureInterval);
+    if (socket) {
+      socket.close();
     }
     stopCamera();
-
-    setTimeout(() => {
-      const presentIds = new Set(allStudents
-        .sort(() => 0.5 - Math.random())
-        .slice(0, Math.floor(allStudents.length * 0.7))
-        .map(s => s.id));
-      
-      setPresentStudents(allStudents.filter(s => presentIds.has(s.id)));
-      setAbsentStudents(allStudents.filter(s => !presentIds.has(s.id)));
-      setAttendanceProcessed(true);
-      setActiveStep(1);
-    }, 2000);
   };
+  const drawFaceBoxes = (faces) => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.strokeStyle = "red";
+    context.lineWidth = 3;
+    context.font = "16px Arial";
+    context.fillStyle = "red";
+
+    faces.forEach(({ x, y, width, height, name }) => {
+      context.strokeRect(x, y, width, height);
+      context.fillText(name, x, y - 10);
+    });
+  };
+
+  const storeAttendance = (faces) => {
+    const presentNames = faces.map(face => face.name);
+    const presentStudentsList = allStudents.filter(student => presentNames.includes(student.name));
+
+    setPresentStudents(presentStudentsList);
+    setAttendanceProcessed(true);
+
+    // Save to the backend (API call to save attendance)
+    fetch('http://localhost:8000/api/attendance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ presentStudents: presentStudentsList })
+    });
+  };
+
+
+  // const stopCamera = () => {
+  //   if (streamRef.current) {
+  //     streamRef.current.getTracks().forEach(track => track.stop());
+  //   }
+  //   if (videoRef.current) {
+  //     videoRef.current.srcObject = null;
+  //   }
+  //   if (captureInterval) {
+  //     clearInterval(captureInterval);
+  //   }
+  // };
+
+  // const captureFrame = () => {
+  //   const canvas = canvasRef.current;
+  //   const context = canvas.getContext('2d');
+  //   const video = videoRef.current;
+
+  //   canvas.width = video.videoWidth;
+  //   canvas.height = video.videoHeight;
+  //   context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  //   const frameDataUrl = canvas.toDataURL('image/jpeg');
+  //   setCapturedFrames(prev => [...prev, frameDataUrl]);
+  //   setFrameCount(prev => prev + 1);
+  // };
+
+  // const handleStartCapture = async () => {
+  //   await startCamera();
+  //   setIsCapturing(true);
+  //   setCapturedFrames([]);
+  //   setFrameCount(0);
+
+  //   const interval = setInterval(captureFrame, 1000);
+  //   setCaptureInterval(interval);
+  // };
+
+
+  // const handleStopCapture = () => {
+  //   setIsCapturing(false);
+  //   if(captureInterval){
+  //     clearInterval(captureInterval);
+  //   }
+  //   stopCamera();
+
+  //   setTimeout(() => {
+  //     const presentIds = new Set(allStudents
+  //       .sort(() => 0.5 - Math.random())
+  //       .slice(0, Math.floor(allStudents.length * 0.7))
+  //       .map(s => s.id));
+
+  //     setPresentStudents(allStudents.filter(s => presentIds.has(s.id)));
+  //     setAbsentStudents(allStudents.filter(s => !presentIds.has(s.id)));
+  //     setAttendanceProcessed(true);
+  //     setActiveStep(1);
+  //   }, 2000);
+  // };
 
   const handleReset = () => {
     setActiveStep(0);
@@ -293,7 +394,7 @@ const MarkAttendance = () => {
               totalCount={allStudents.length}
             />
           )}
-          
+
           {/* Stepper */}
           <Stepper
             activeStep={activeStep}
@@ -398,27 +499,28 @@ const MarkAttendance = () => {
                     </Alert>
                   )}
 
-                  <Box sx = {{display: "flex", gap:2}}  >
-                    {! isCapturing ? (
+                  <Box sx={{ display: "flex", gap: 2 }}  >
+                    {!isCapturing ? (
                       <Button
-                      variant="contained"
-                      
-                      onClick={handleStartCapture}
-                      disabled={isCapturing}
-                      startIcon={<PhotoCamera />}
-                      size="large"
-                      sx={{
-                        px: 4,
-                        py: 1.5,
-                        fontSize: '1.1rem',
-                        background: 'linear-gradient(45deg, #2196f3 30%, #2196f3 90%)',
-                                '&:hover': {
-                        background: 'linear-gradient(45deg, #1976d2 30%, #1976d2 90%'
-                      }}}
-                     >
-                     Start Capture
-                     </Button>
-                    ):(<Button
+                        variant="contained"
+
+                        onClick={handleStartCapture}
+                        disabled={isCapturing}
+                        startIcon={<PhotoCamera />}
+                        size="large"
+                        sx={{
+                          px: 4,
+                          py: 1.5,
+                          fontSize: '1.1rem',
+                          background: 'linear-gradient(45deg, #2196f3 30%, #2196f3 90%)',
+                          '&:hover': {
+                            background: 'linear-gradient(45deg, #1976d2 30%, #1976d2 90%'
+                          }
+                        }}
+                      >
+                        Start Capture
+                      </Button>
+                    ) : (<Button
                       variant="contained"
                       onClick={handleStopCapture}
                       color="secondary"
@@ -432,7 +534,7 @@ const MarkAttendance = () => {
                     >
                       Stop Capture
                     </Button>)
-                  }
+                    }
                   </Box>
                 </Box>
               </CardContent>

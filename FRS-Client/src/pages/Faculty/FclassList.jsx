@@ -322,7 +322,7 @@ const ClassCards = ({ year, date }) => {
                       color="primary" 
                       size="small"
                       sx={{ textTransform: 'none' }}
-                      onClick={() => handleNavigation('/facultyauth', classItem.id)}
+                      onClick={() => handleNavigation('/markattendance', classItem.id)}
                     >
                       Mark Attendance
                     </Button>

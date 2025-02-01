@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { TableHead,  } from '@mui/material';
-
+import React, { useState, useEffect } from 'react';
+import ClassList from "./ClassesList"; 
 import { 
   Grid, 
   Card, 
@@ -18,71 +17,23 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-  Paper
+  Paper,
+  CircularProgress,
+  Alert,
+  TableHead
 } from '@mui/material';
 import { 
   School, 
   AccessTime, 
   CheckCircleOutline,
-  HighlightOff
+  HighlightOff,
+  ContentCutOutlined
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';  
 import { green, red } from '@mui/material/colors';
 
-const classes = [
-  { 
-    id: 1, 
-    subject: 'Math', 
-    time: '10:00 AM', 
-    endTime: '11:00 AM', 
-    presents: 40, 
-    absents: 5, 
-    classFor: 'Sec : A', 
-    absentStudents: [
-      { id: 'S001', name: 'John Doe' },
-      { id: 'S002', name: 'Jane Smith' },
-    ] 
-  },
-  { 
-    id: 2, 
-    subject: 'Science', 
-    time: '11:00 AM', 
-    endTime: '12:00 PM', 
-    presents: 18, 
-    absents: 7, 
-    classFor: 'Sec : B', 
-    absentStudents: [
-      { id: 'S003', name: 'Tom Brown' },
-      { id: 'S004', name: 'Lisa White' },
-    ]
-  },
-  { 
-    id: 3, 
-    subject: 'History', 
-    time: '12:00 PM', 
-    endTime: '1:00 PM', 
-    presents: 22, 
-    absents: 3, 
-    classFor: 'Sec : C' ,
-    absentStudents: [
-        { id: 'S006', name: ' Brown' },
-        { id: 'S007', name: ' White' },
-      ]
-  },
-  { 
-    id: 4, 
-    subject: 'Art', 
-    time: '1:00 PM', 
-    endTime: '2:00 PM', 
-    presents: 35, 
-    absents: 10, 
-    classFor: 'Sec : D',
-    absentStudents: [{id:'s20',name:'cameron'},
-    {id:'s21',name:'daniel'}]
-  }// Add more classes with absentStudents...
-];
-
+// Define the AttendanceChart component
 const AttendanceChart = ({ present, total }) => {
   const absent = total - present;
 
@@ -158,10 +109,83 @@ const AttendanceChart = ({ present, total }) => {
   );
 };
 
-const ClassCards = ({ year }) => {
+const ClassCards = ({ year, date }) => {
   const navigate = useNavigate();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
+  const [classes, setClasses] = useState([]); // Initialize as an empty array
+  const [loading, setLoading] = useState(true); // State for loading
+  const [error, setError] = useState(null); // State for error handling
+
+  // Period-to-time mapping
+  const periodTimeMapping = {
+    p1: { start: "8:30 AM", end: "9:30 AM" },
+    p2: { start: "9:30 AM", end: "10:30 AM" },
+    p3: { start: "10:40 AM", end: "11:40 AM" },
+    p4: { start: "11:40 AM", end: "12:40 PM" },
+    p5: { start: "1:40 PM", end: "2:40 PM" },
+    p6: { start: "2:40 PM", end: "3:40 PM" },
+    p7: { start: "3:40 PM", end: "4:40 PM" },
+  };
+
+  // Fetch data from the backend
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token'); // Retrieve the token
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
+        // Include the date parameter in the API request
+        const response = await fetch(`http://127.0.0.1:8000/faculty/dashboard/?date=${date}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`, // Include the token in the headers
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const data = await response.json();
+        console.log("Fetched Data:", data);
+
+        // Validate and transform the data
+        if (data && Array.isArray(data.schedule)) {
+          const transformedData = data.schedule.map((classItem) => {
+            // Get the first period from the periods array
+            const period = classItem.periods[0]; // Assuming each class has at least one period
+            const timeSlot = periodTimeMapping[period] || { start: "N/A", end: "N/A" }; // Default to "N/A" if period is invalid
+
+            return {
+              id: classItem.subject + "-" + classItem.section, // Generate a unique ID
+              subject: classItem.subject || "N/A",
+              classFor: `Sec: ${classItem.section || "N/A"}`,
+              time: timeSlot.start, // Set time based on period
+              endTime: timeSlot.end, // Set endTime based on period
+              presents: classItem.presents || 0, // Use presents from backend
+            absents: classItem.absents || 0, // Use absents from backend
+            absentStudents: classItem.absentStudents || [],  // Default value for absentStudents
+            };
+          });
+
+          setClasses(transformedData); // Update state with transformed data
+        } else {
+          throw new Error('Invalid data format received from the server');
+        }
+      } catch (error) {
+        setError(error.message); // Set error message
+        setClasses([]); // Reset classes to an empty array in case of error
+      } finally {
+        setLoading(false); // Set loading to false
+      }
+    };
+
+    fetchData();
+  }, [date]); // Re-fetch data when the date changes
 
   const getAttendancePercentage = (presents, absents) => {
     const total = presents + absents;
@@ -180,24 +204,32 @@ const ClassCards = ({ year }) => {
 
   const handleDialogOpen = (classItem) => {
     setSelectedClass(classItem);
-    setDialogOpen(true); // Open the dialog
+    setDialogOpen(true);
   };
 
   const handleDialogClose = () => {
-    setDialogOpen(false); // Close the dialog
-    setSelectedClass(null); // Reset selected class
+    setDialogOpen(false);
+    setSelectedClass(null);
   };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Alert severity="error">{error}</Alert>
+      </Box>
+    );
+  }
 
   return (
     <Box>
-      <Typography 
-        variant="h6"
-        component="h1" 
-        fontWeight="bold"
-        color="#1a237e"
-      >
-        {`${year} class details`}
-      </Typography>
       <Grid container spacing={2} sx={{ padding: '16px' }}>
         {classes.map((classItem) => {
           const attendancePercent = getAttendancePercentage(classItem.presents, classItem.absents);
@@ -236,8 +268,10 @@ const ClassCards = ({ year }) => {
                         fontWeight: 'bold'
                       }}
                     >
-                      {classItem.classFor}
+                      {`${year.toUpperCase()}, SEC: ${classItem.classFor.split(': ')[1].toUpperCase()}`} {/* Year and Section in uppercase */}
                     </Typography>
+
+
                   </Box>
 
                   <Divider sx={{ my: 1.5 }} />
@@ -325,38 +359,36 @@ const ClassCards = ({ year }) => {
           Attendance Statistics for {selectedClass?.subject} - {selectedClass?.classFor}
         </DialogTitle>
         <DialogContent>
-  <AttendanceChart 
-    present={selectedClass?.presents} 
-    total={selectedClass?.presents + selectedClass?.absents} 
-  />
+          <AttendanceChart
+            present={selectedClass?.presents} 
+            total={selectedClass?.presents + selectedClass?.absents} 
+          />
 
-  {/* Absentee Details Table */}
-  <Box sx={{ mt: 2 }}>
-    <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2', mb: 1 }}>
-      Absentees Details
-    </Typography>
-    <TableContainer component={Paper} sx={{ mt: 1, bgcolor: '#f5f5f5' }}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ fontWeight: 'bold', color: '#1976d2' }}>ID</TableCell>
-            <TableCell sx={{ fontWeight: 'bold', color: '#1976d2' }}>Name</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {selectedClass?.absentStudents?.map((student) => (
-            <TableRow key={student.id}>
-              <TableCell sx={{ fontWeight: 'bold', color: '#333' }}>{student.id}</TableCell>
-              <TableCell sx={{ color: '#1976d2' }}>{student.name}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  </Box>
-</DialogContent>
-
-
+          {/* Absentee Details Table */}
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2', mb: 1 }}>
+              Absentees Details
+            </Typography>
+            <TableContainer component={Paper} sx={{ mt: 1, bgcolor: '#f5f5f5' }}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={{ fontWeight: 'bold', color: '#1976d2' }}>ID</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold', color: '#1976d2' }}>Name</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {selectedClass?.absentStudents?.map((student) => (
+                    <TableRow key={student.id}>
+                      <TableCell sx={{ fontWeight: 'bold', color: '#333' }}>{student.id}</TableCell>
+                      <TableCell sx={{ color: '#1976d2' }}>{student.name}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        </DialogContent>
 
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary">

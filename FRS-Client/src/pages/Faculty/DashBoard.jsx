@@ -27,23 +27,25 @@ const FacultyDashboard = () => {
   }, [selectedDate]);
 
   const fetchFacultyDashboardData = async () => {
-    const email = localStorage.getItem('token'); // Get email from localStorage
+    const token = localStorage.getItem('token'); // Get email from localStorage
 
-    if (!email) {
+    if (!token) {
       console.error("Faculty email is not available in localStorage");
       return;
     }
 
     try {
-      const response = await axios.get('http://127.0.0.1:8000/faculty/faculty/dashboard/', {
+      const response = await axios.get('http://127.0.0.1:8000/faculty/dashboard/', {
+        headers:{ 
+          "Content-Type":"application/json",
+          "Authorization":`Bearer ${token}`
+        },
         params: {
-          email_address: email,
           date: selectedDate
         }
-        
       });
-      console.log(email);
       const { schedule, attendance } = response.data;
+      console.log(response.data);
       setSchedule(schedule);
       setAttendance(attendance);
 

@@ -57,7 +57,7 @@ function App() {
           {/* Login Route */}
           <Route path="/addstudent" element={<AddStudent />} />
 
-          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpFrom />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/setpassword" element={<Setpassword />} />

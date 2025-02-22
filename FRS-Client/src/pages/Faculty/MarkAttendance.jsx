@@ -186,7 +186,7 @@ const MarkAttendance = () => {
     startCamera();
     setIsCapturing(true);
 
-    const ws = new WebSocket("ws://127.0.0.1:8000:8000/ws");
+    const ws = new WebSocket("ws://127.0.0.1:8000/capturing-images/ws");  
     setSocket(ws);
 
     ws.onopen = () => {
@@ -212,7 +212,7 @@ const MarkAttendance = () => {
         ws.send(
           JSON.stringify({
             frame: frame,
-            faculty_id: "ankit.sharma@example.com",
+            faculty_id: facultyId,
             year: year,
             branch: branch,
             section: section

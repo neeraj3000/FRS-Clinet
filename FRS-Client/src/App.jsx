@@ -47,6 +47,8 @@ import FacultyStudentVisualisation from "./pages/Faculty/StudentVisualisation"
 import StudentTimeTableManager from "./pages/student/TimeTable";
 import ManageClassesList from "./pages/student/ManageClassesList";
 
+import WebcamCapture from "./pages/admin/Webcamcapture";
+
 function App() {
   return (
 
@@ -91,6 +93,8 @@ function App() {
             <Route path="studentvisualisation" element={<StudentVisualisation />} />
             <Route path="studentvisualisation/:studentId" element={<StudentAttendaceOverview />} />
             <Route path="profile" element={<AdminProfile />} />
+            <Route path="webcam-capture" element={<WebcamCapture />} />
+
           </Route>
           <Route path="/faculty" element={<Faculty />}>
              <Route index element={<Navigate to="/faculty/dashboard" />} /> 

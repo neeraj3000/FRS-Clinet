@@ -154,7 +154,7 @@ export default function MiniDrawer({
   const handleLogout = () => {
     handleProfileMenuClose();
     localStorage.removeItem("authToken");
-    navigate("/login");
+    navigate("/");
   };
 
   // Keep existing menu handlers...

@@ -18,21 +18,17 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import AccountCircle from "@mui/icons-material/AccountCircle";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import Badge from "@mui/material/Badge";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import LogoutIcon from '@mui/icons-material/Logout';
-import SettingsIcon from '@mui/icons-material/Settings';
-import PersonIcon from '@mui/icons-material/Person';
+import Avatar from "@mui/material/Avatar";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import LogoutIcon from "@mui/icons-material/Logout";
+import SettingsIcon from "@mui/icons-material/Settings";
+import PersonIcon from "@mui/icons-material/Person";
 
-const PRIMARY_COLOR = '#1976D2';
+const PRIMARY_COLOR = "#1976D2";
 const drawerWidthDefault = 240;
 
 const openedMixin = (theme, drawerWidth) => ({
@@ -42,9 +38,10 @@ const openedMixin = (theme, drawerWidth) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: "hidden",
-  backgroundColor: '#fafafa',
-  borderRight: 'none',
-  boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
+  backgroundColor: "#fafafa",
+  borderRight: "none",
+  boxShadow:
+    "rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
 });
 
 const closedMixin = (theme) => ({
@@ -53,9 +50,10 @@ const closedMixin = (theme) => ({
     duration: theme.transitions.duration.leavingScreen,
   }),
   overflowX: "hidden",
-  backgroundColor: '#fafafa',
-  borderRight: 'none',
-  boxShadow: 'rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px',
+  backgroundColor: "#fafafa",
+  borderRight: "none",
+  boxShadow:
+    "rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
   width: `calc(${theme.spacing(7)} + 1px)`,
   [theme.breakpoints.up("sm")]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
@@ -68,7 +66,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
   ...theme.mixins.toolbar,
-  backgroundColor: '#fafafa',
+  backgroundColor: "#fafafa",
 }));
 
 const AppBar = styled(MuiAppBar, {
@@ -80,8 +78,8 @@ const AppBar = styled(MuiAppBar, {
     duration: theme.transitions.duration.leavingScreen,
   }),
   backgroundColor: PRIMARY_COLOR,
-  boxShadow: 'none',
-  borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+  boxShadow: "none",
+  borderBottom: "1px solid rgba(255, 255, 255, 0.12)",
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -110,19 +108,19 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 const ProfileSection = styled(Box)(({ theme, open }) => ({
-  position: 'fixed',
+  position: "fixed",
   bottom: 0,
   width: open ? drawerWidthDefault : `calc(${theme.spacing(7)} + 1px)`,
-  backgroundColor: '#fafafa',
-  borderTop: '1px solid rgba(0, 0, 0, 0.12)',
+  backgroundColor: "#fafafa",
+  borderTop: "1px solid rgba(0, 0, 0, 0.12)",
   padding: theme.spacing(2),
-  transition: theme.transitions.create('width', {
+  transition: theme.transitions.create("width", {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   gap: theme.spacing(2),
 }));
 
@@ -133,8 +131,9 @@ export default function MiniDrawer({
   drawerWidth = drawerWidthDefault,
   title = "",
   drawerItems = [],
-  secondaryItems = []
+  secondaryItems = [],
 }) {
+  const navigate = useNavigate();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -154,8 +153,8 @@ export default function MiniDrawer({
 
   const handleLogout = () => {
     handleProfileMenuClose();
-    // Add your logout logic here
-    console.log('Logging out...');
+    localStorage.removeItem("authToken");
+    navigate("/");
   };
 
   // Keep existing menu handlers...
@@ -166,26 +165,26 @@ export default function MiniDrawer({
       open={isProfileMenuOpen}
       onClose={handleProfileMenuClose}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
+        vertical: "top",
+        horizontal: "right",
       }}
       transformOrigin={{
-        vertical: 'bottom',
-        horizontal: 'right',
+        vertical: "bottom",
+        horizontal: "right",
       }}
     >
-      <MenuItem onClick={handleProfileMenuClose}>
+      <MenuItem component={Link} to={`/${title.toLowerCase()}/profile`} onClick={handleProfileMenuClose}>
         <ListItemIcon>
           <PersonIcon fontSize="small" />
         </ListItemIcon>
         Profile
       </MenuItem>
-      <MenuItem onClick={handleProfileMenuClose}>
+      {/* <MenuItem onClick={handleProfileMenuClose}>
         <ListItemIcon>
           <SettingsIcon fontSize="small" />
         </ListItemIcon>
         Settings
-      </MenuItem>
+      </MenuItem> */}
       <Divider />
       <MenuItem onClick={handleLogout}>
         <ListItemIcon>
@@ -219,7 +218,7 @@ export default function MiniDrawer({
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
-            <IconButton size="large" color="inherit">
+            {/* <IconButton size="large" color="inherit">
               <Badge badgeContent={4} color="error">
                 <MailIcon />
               </Badge>
@@ -228,7 +227,7 @@ export default function MiniDrawer({
               <Badge badgeContent={17} color="error">
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
           </Box>
         </Toolbar>
       </AppBar>
@@ -243,8 +242,8 @@ export default function MiniDrawer({
             )}
           </IconButton>
         </DrawerHeader>
-        <Divider sx={{ borderColor: 'rgba(0, 0, 0, 0.08)' }} />
-        
+        <Divider sx={{ borderColor: "rgba(0, 0, 0, 0.08)" }} />
+
         <List>
           {drawerItems.map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
@@ -255,15 +254,15 @@ export default function MiniDrawer({
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
-                  borderRadius: '8px',
+                  borderRadius: "8px",
                   mx: 1,
-                  '&:hover': {
-                    backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                  "&:hover": {
+                    backgroundColor: "rgba(25, 118, 210, 0.04)",
                   },
-                  '&.Mui-selected': {
-                    backgroundColor: 'rgba(25, 118, 210, 0.08)',
-                    '&:hover': {
-                      backgroundColor: 'rgba(25, 118, 210, 0.12)',
+                  "&.Mui-selected": {
+                    backgroundColor: "rgba(25, 118, 210, 0.08)",
+                    "&:hover": {
+                      backgroundColor: "rgba(25, 118, 210, 0.12)",
                     },
                   },
                 }}
@@ -279,22 +278,22 @@ export default function MiniDrawer({
                 >
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
-                <ListItemText 
-                  primary={text} 
-                  sx={{ 
+                <ListItemText
+                  primary={text}
+                  sx={{
                     opacity: open ? 1 : 0,
-                    '& .MuiTypography-root': {
+                    "& .MuiTypography-root": {
                       fontWeight: 500,
-                    }
-                  }} 
+                    },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
-        
-        <Divider sx={{ borderColor: 'rgba(0, 0, 0, 0.08)' }} />
-        
+
+        <Divider sx={{ borderColor: "rgba(0, 0, 0, 0.08)" }} />
+
         <List>
           {secondaryItems.map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
@@ -303,10 +302,10 @@ export default function MiniDrawer({
                   minHeight: 48,
                   justifyContent: open ? "initial" : "center",
                   px: 2.5,
-                  borderRadius: '8px',
+                  borderRadius: "8px",
                   mx: 1,
-                  '&:hover': {
-                    backgroundColor: 'rgba(25, 118, 210, 0.04)',
+                  "&:hover": {
+                    backgroundColor: "rgba(25, 118, 210, 0.04)",
                   },
                 }}
                 onClick={handleDrawerClose}
@@ -321,14 +320,14 @@ export default function MiniDrawer({
                 >
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
-                <ListItemText 
-                  primary={text} 
-                  sx={{ 
+                <ListItemText
+                  primary={text}
+                  sx={{
                     opacity: open ? 1 : 0,
-                    '& .MuiTypography-root': {
+                    "& .MuiTypography-root": {
                       fontWeight: 500,
-                    }
-                  }} 
+                    },
+                  }}
                 />
               </ListItemButton>
             </ListItem>
@@ -337,14 +336,16 @@ export default function MiniDrawer({
 
         {/* Updated Profile Section */}
         <ProfileSection open={open}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: PRIMARY_COLOR }}>U</Avatar>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Avatar sx={{ width: 32, height: 32, bgcolor: PRIMARY_COLOR }}>
+              U
+            </Avatar>
             {open && (
-              <Box sx={{ overflow: 'hidden' }}>
+              <Box sx={{ overflow: "hidden" }}>
                 <Typography variant="subtitle2" noWrap sx={{ fontWeight: 600 }}>
                   User Name
                 </Typography>
-                <Typography variant="caption" noWrap sx={{ color: '#666666' }}>
+                <Typography variant="caption" noWrap sx={{ color: "#666666" }}>
                   user@example.com
                 </Typography>
               </Box>
@@ -354,7 +355,7 @@ export default function MiniDrawer({
             <IconButton
               size="small"
               onClick={handleProfileMenuOpen}
-              sx={{ color: '#666666' }}
+              sx={{ color: "#666666" }}
             >
               <MoreVertIcon />
             </IconButton>
@@ -367,7 +368,7 @@ export default function MiniDrawer({
         component="main"
         sx={{
           flexGrow: 1,
-          bgcolor: '#ffffff',
+          bgcolor: "#ffffff",
           p: 2,
         }}
       >

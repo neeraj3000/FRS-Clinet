@@ -5,8 +5,8 @@ export default function Faculty() {
   const drawerItems = [
     "Dashboard",
     "Today Classes",
-    "Profile",
-    "Settings",
+    "Timetable",
+    "Student Visualisation",
   ];
 
   const [open, setOpen] = useState(false);  // Keep drawer open by default

@@ -88,7 +88,7 @@ const TimeTableTabs = () => {
           fontWeight="bold"
           color="#1a237e"
         >
-          Manage TimeTable
+          TimeTable
         </Typography>
 
       

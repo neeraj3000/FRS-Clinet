@@ -94,6 +94,7 @@ const AttendanceDashboard = ({ authtoken }) => {
     navigate(`/faculty/studentvisualisation/${enteredID}?year=${selectedYear}`);
   };
 
+  // Fixed StatCard component with null check for value
   const StatCard = ({ title, value, icon: Icon, color, isPercentage }) => (
     <Card elevation={3}>
       <CardContent>
@@ -103,7 +104,13 @@ const AttendanceDashboard = ({ authtoken }) => {
               {title}
             </Typography>
             <Typography variant="h5" component="div">
-              {isPercentage ? `${value.toFixed(2)}%` : value}
+              {isPercentage && value !== undefined && value !== null 
+                ? `${value.toFixed(2)}%` 
+                : isPercentage 
+                  ? '0.00%' 
+                  : value !== undefined && value !== null 
+                    ? value 
+                    : 0}
             </Typography>
           </Box>
           <Icon sx={{ fontSize: 40, color }} />
@@ -270,13 +277,14 @@ const AttendanceDashboard = ({ authtoken }) => {
               onClick={() => handleYearClick(yearData.year)}
             >
               <Typography variant="h6" gutterBottom>
+                {console.log("yearData:", yearData)}
                 {yearData.year} Year Section-wise Attendance
               </Typography>
               <Box height={400}>
                 <ResponsiveContainer>
                   <PieChart>
                     <Pie
-                      data={yearData.sections}
+                      data={yearData.sections.filter(section => section.attendance !== undefined && section.attendance !== null)}
                       dataKey="attendance"
                       nameKey="section"
                       cx="50%"
@@ -284,7 +292,7 @@ const AttendanceDashboard = ({ authtoken }) => {
                       outerRadius={120}
                       fill="#8884d8"
                       label={(entry) =>
-                        `${entry.section}: ${entry.attendance.toFixed(2)}%`
+                        `${entry.section}: ${entry.attendance !== undefined && entry.attendance !== null ? entry.attendance.toFixed(2) : '0.00'}%`
                       }
                     >
                       {yearData.sections.map((_, idx) => (
@@ -294,7 +302,7 @@ const AttendanceDashboard = ({ authtoken }) => {
                         />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    <Tooltip formatter={(value) => value !== undefined && value !== null ? `${value.toFixed(2)}%` : '0.00%'} />
                   </PieChart>
                 </ResponsiveContainer>
               </Box>

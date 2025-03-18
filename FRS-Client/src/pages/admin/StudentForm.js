@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -10,385 +11,385 @@ import {
   Select,
   MenuItem,
   InputLabel,
+  InputAdornment,
   IconButton,
-  Container,
+  Grid,
+  Card,
+  CardContent,
+  Divider,
+  Chip,
+  Stack,
+  Alert,
+  styled,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import SchoolIcon from "@mui/icons-material/School";
+import PersonIcon from "@mui/icons-material/Person";
+import PhoneIcon from "@mui/icons-material/Phone";
+import BadgeIcon from "@mui/icons-material/Badge";
+import VideocamIcon from "@mui/icons-material/Videocam";
+
+// Styled components for enhanced UI
+const StyledFormCard = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  maxWidth: 850,
+  margin: "0 auto",
+  marginTop: theme.spacing(4),
+  borderRadius: "16px",
+  boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+  background: "linear-gradient(to right bottom, #ffffff, #f9f9ff)",
+}));
+
+const FieldLabel = styled(Typography)(({ theme }) => ({
+  fontWeight: 500,
+  marginBottom: theme.spacing(0.5),
+  fontSize: "0.9rem",
+  color: theme.palette.text.secondary,
+}));
+
+const SectionTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 600,
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+  color: theme.palette.primary.main,
+}));
 
 const StudentForm = () => {
   const [formData, setFormData] = useState({
-    id_number: "",
+    studentIdSuffix: "",
     batch: "",
-    first_name: "",
-    last_name: "",
-    middle_name: "",
-    year: "",
+    name: "",
     branch: "",
     section: "",
-    email_address: "",
-    phone_number: "",
-    password: "",
+    year: "",
     gender: "",
-    semester: "",
-    confirmPassword: ""
+    phone_number: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDataRetrieved, setIsDataRetrieved] = useState(false);
   const navigate = useNavigate();
 
   const batchOptions = ["R19", "R20", "R21", "R22"];
-  const genderOptions = ["Male", "Female", "Other"];
-  const branchOptions = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
-  const sectionOptions = ["A", "B", "C", "D"];
-  const semesterOptions = ["1", "2"];
-  const yearOptions = ["E1", "E2", "E3", "E4", "P1", "P2"];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleBatchChange = (e) => {
+    const selectedBatch = e.target.value;
     setFormData((prevData) => ({
       ...prevData,
-      [name]: value,
+      batch: selectedBatch,
+      studentIdSuffix: "",
     }));
+    setIsDataRetrieved(false);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    const requiredFields = [
-      "id_number",
-      "batch",
-      "first_name",
-      "last_name",
-      "middle_name",
-      "branch",
-      "section",
-      "gender",
-      "phone_number",
-      "email_address",
-      "semester",
-      "year",
-      "password",
-      "confirmPassword",
-    ];
-  
-    const missingFields = requiredFields.filter((field) => !formData[field]);
-  
-    if (missingFields.length > 0) {
-      setErrorMessage("Please fill in all required fields.");
-      return;
-    }
-  
-    if (formData.id_number.length !== 7) {
-      setErrorMessage("Student ID must be 7 digits.");
-      return;
-    }
-  
-    if (formData.password !== formData.confirmPassword) {
-      setErrorMessage("Passwords do not match.");
-      return;
-    }
-  
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email_address)) {
-      setErrorMessage("Please enter a valid email address.");
-      return;
-    }
-  
-    // Simple phone number validation
-    const phoneRegex = /^\d{10}$/;
-    if (!phoneRegex.test(formData.phone_number)) {
-      setErrorMessage("Please enter a valid 10-digit phone number.");
-      return;
-    }
-  
-    // Convert form data to match backend enums
-    const submissionData = {
-      id_number: formData.id_number,
-      first_name: formData.first_name,
-      last_name: formData.last_name,
-      middle_name: formData.middle_name || "", 
-      year: formData.year.toUpperCase(),
-      branch: formData.branch.toLowerCase(),
-      section: formData.section.toUpperCase(),
-      email_address: formData.email_address,
-      phone_number: formData.phone_number,
-      password: formData.password,
-      gender: formData.gender.toLowerCase(),
-      overall_attendance: 0,
-      semester: formData.semester.toString(),
-    };
-  
-    // Build query string from submission data
-    const queryParams = new URLSearchParams();
-    for (const [key, value] of Object.entries(submissionData)) {
-      queryParams.append(key, value);
-    }
-    
-    const apiUrl = `http://127.0.0.1:8000/admin/create-student?${queryParams.toString()}`;
-    console.log("Submitting to URL:", apiUrl);
-  
-    try {
-      const response = await fetch(apiUrl, {
-        method: "POST", // Changed to GET since we're using query params
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-    
-      const data = await response.json();
-    
-      if (response.ok) {
-        console.log("Student created successfully:", data);
-        navigate(`/admin/webcam-capture?id=${submissionData.id_number}`, { state: { formData: submissionData } });
-      } else {
-        // Handle FastAPI validation errors properly
-        if (Array.isArray(data.detail)) {
-          // Extract only the messages
-          const errorMessages = data.detail.map((error) => error.msg).join(", ");
-          setErrorMessage(errorMessages);
+  const handleStudentIdSuffixChange = async (e) => {
+    const suffix = e.target.value;
+    const fullStudentId = formData.batch + suffix;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      studentIdSuffix: suffix,
+    }));
+
+    if (suffix.length === 4 && formData.batch) {
+      setIsLoading(true);
+      try {
+        const response = await axios.post("http://127.0.0.1:8000/admin/student-details", { id_number: fullStudentId });
+        const data = response.data;
+
+        if (data.error) {
+          setErrorMessage(data.error);
+          setFormData((prevData) => ({
+            ...prevData,
+            name: "",
+            branch: "",
+            section: "",
+            year: "",
+            gender: "",
+            phone_number: "",
+          }));
+          setIsDataRetrieved(false);
         } else {
-          setErrorMessage(data.detail || "Failed to create student.");
+          setFormData((prevData) => ({
+            ...prevData,
+            name: data.name,
+            branch: data.branch,
+            section: data.section,
+            year: data.year,
+            gender: data.gender,
+            phone_number: data.phone_number,
+          }));
+          setErrorMessage("");
+          setIsDataRetrieved(true);
         }
+      } catch (error) {
+        setErrorMessage("Error retrieving student details. Please try again.");
+        setFormData((prevData) => ({
+          ...prevData,
+          name: "",
+          branch: "",
+          section: "",
+          year: "",
+          gender: "",
+          phone_number: "",
+        }));
+        setIsDataRetrieved(false);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Error:", error);
-      setErrorMessage("Network error. Please try again.");
+    } else {
+      setErrorMessage("");
+      setFormData((prevData) => ({
+        ...prevData,
+        name: "",
+        branch: "",
+        section: "",
+        year: "",
+        gender: "",
+        phone_number: "",
+      }));
+      setIsDataRetrieved(false);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!formData.batch || !formData.studentIdSuffix || formData.studentIdSuffix.length < 4) {
+      setErrorMessage("Please fill in all required fields and ensure the Student ID has 4 digits.");
+      return;
+    }
+
+    if (!formData.name || !formData.branch || !formData.section) {
+      setErrorMessage("Please retrieve student details before submitting.");
+      return;
+    }
+
+    const submissionData = {
+      id_number: formData.batch + formData.studentIdSuffix,
+    };
+    
+    console.log(submissionData);
+    navigate(`/admin/webcam-capture?id=${submissionData.id_number}`, { state: { formData: submissionData } });
   };
 
   return (
-    <Box 
-      sx={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        bgcolor: '#f5f5f5',
-        py: 4
-      }}
-    >
-      <Container maxWidth="xl">
-        <Paper 
-          elevation={4} 
+    <StyledFormCard elevation={4}>
+      {/* Header with back button */}
+      <Box display="flex" alignItems="center" mb={3}>
+        <IconButton 
+          onClick={() => navigate("/admin/dashboard")}
           sx={{ 
-            p: { xs: 2, sm: 4 },
-            borderRadius: "16px",
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2
+            backgroundColor: "rgba(0,0,0,0.04)", 
+            "&:hover": { backgroundColor: "rgba(0,0,0,0.08)" } 
           }}
         >
-          <Box display="flex" alignItems="center">
-            <IconButton onClick={() => navigate("/")} sx={{ mr: 1 }}>
-              <ArrowBackIcon />
-            </IconButton>
-            <Typography variant="h4" sx={{ flexGrow: 1, textAlign: "center", fontWeight: 500 }}>
-              Student Registration
-            </Typography>
-          </Box>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography 
+          variant="h4" 
+          sx={{ 
+            flexGrow: 1, 
+            textAlign: "center", 
+            fontWeight: 600,
+            backgroundImage: "linear-gradient(45deg, #3f51b5, #2196f3)",
+            backgroundClip: "text",
+            textFillColor: "transparent",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          Student Registration
+        </Typography>
+      </Box>
 
-          <form onSubmit={handleSubmit} noValidate>
-            <Box 
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
-                gap: 2,
-                mt: 2
-              }}
-            >
-              <FormControl>
-                <InputLabel>Batch *</InputLabel>
-                <Select
-                  name="batch"
-                  value={formData.batch}
-                  onChange={handleChange}
-                  label="Batch"
-                  required
-                >
-                  {batchOptions.map((batch) => (
-                    <MenuItem key={batch} value={batch}>{batch}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <TextField
-                label="Student ID"
-                name="id_number"
-                variant="outlined"
-                value={formData.id_number}
-                onChange={handleChange}
-                required
-                inputProps={{ maxLength: 7 }}
-                helperText="Enter the last four digits"
-              />
-              <TextField 
-                label="First Name"
-                name="first_name"
-                value={formData.first_name}
-                onChange={handleChange}
-                required
-                variant="outlined" 
-              />
-              <TextField 
-                label="Last Name"
-                name="last_name"
-                value={formData.last_name}
-                onChange={handleChange}
-                required
-                variant="outlined" 
-              />
-
-              <TextField 
-                label="Middle Name"
-                name="middle_name"
-                value={formData.middle_name}
-                onChange={handleChange}
-                variant="outlined" 
-                helperText="Optional"
-              />
-
-              <FormControl>
-                <InputLabel>Gender *</InputLabel>
-                <Select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  label="Gender"
-                  required
-                >
-                  {genderOptions.map((gender) => (
-                    <MenuItem key={gender} value={gender}>{gender}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl>
-                <InputLabel>Branch *</InputLabel>
-                <Select
-                  name="branch"
-                  value={formData.branch}
-                  onChange={handleChange}
-                  label="Branch"
-                  required
-                >
-                  {branchOptions.map((branch) => (
-                    <MenuItem key={branch} value={branch}>{branch}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <FormControl>
-                <InputLabel>Section *</InputLabel>
-                <Select
-                  name="section"
-                  value={formData.section}
-                  onChange={handleChange}
-                  label="Section"
-                  required
-                >
-                  {sectionOptions.map((section) => (
-                    <MenuItem key={section} value={section}>{section}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+      <form onSubmit={handleSubmit} noValidate>
+        <Card variant="outlined" sx={{ mb: 3, borderRadius: "12px" }}>
+          <CardContent>
+            <SectionTitle variant="h6">
+              <BadgeIcon color="primary" /> Student Identification
+            </SectionTitle>
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={4}>
+                <FieldLabel>Batch</FieldLabel>
+                <FormControl fullWidth variant="outlined" size="small">
+                  <Select
+                    name="batch"
+                    value={formData.batch}
+                    onChange={handleBatchChange}
+                    displayEmpty
+                    required
+                  >
+                    <MenuItem value="" disabled>Select Batch</MenuItem>
+                    {batchOptions.map((batch) => (
+                      <MenuItem key={batch} value={batch}>{batch}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
               
-              <TextField 
-                label="Phone Number"
-                name="phone_number"
-                value={formData.phone_number}
-                onChange={handleChange}
-                required
-                variant="outlined"
-                inputProps={{ maxLength: 10 }}
-                helperText="10-digit number without spaces or dashes" 
-              />
-              
-              <TextField 
-                label="Email Address"
-                name="email_address"
-                value={formData.email_address}
-                onChange={handleChange}
-                required
-                variant="outlined"
-                type="email" 
-              />
-              
-              <FormControl>
-                <InputLabel>Semester *</InputLabel>
-                <Select
-                  name="semester"
-                  value={formData.semester}
-                  onChange={handleChange}
-                  label="Semester"
+              <Grid item xs={12} md={8}>
+                <FieldLabel>Student ID</FieldLabel>
+                <TextField
+                  fullWidth
+                  placeholder="Enter last 4 digits"
+                  variant="outlined"
+                  size="small"
+                  value={formData.studentIdSuffix}
+                  onChange={handleStudentIdSuffixChange}
                   required
-                >
-                  {semesterOptions.map((semester) => (
-                    <MenuItem key={semester} value={semester}>{semester}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              
-              <FormControl>
-                <InputLabel>Year *</InputLabel>
-                <Select
-                  name="year"
-                  value={formData.year}
-                  onChange={handleChange}
-                  label="Year"
-                  required
-                >
-                  {yearOptions.map((year) => (
-                    <MenuItem key={year} value={year}>{year}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              
-              <TextField 
-                label="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                variant="outlined"
-                type="password" 
-              />
-              
-              <TextField 
-                label="Confirm Password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                variant="outlined" 
-                type="password"
-              />
-            </Box>
+                  disabled={!formData.batch || isLoading}
+                  InputProps={{
+                    startAdornment: formData.batch && (
+                      <InputAdornment position="start">
+                        <Chip label={formData.batch} size="small" color="primary" variant="outlined" />
+                      </InputAdornment>
+                    ),
+                    inputProps: { maxLength: 4 },
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
 
-            {errorMessage && (
-              <Typography color="error" variant="body2" sx={{ mt: 3, textAlign: "center" }}>
-                {errorMessage}
-              </Typography>
-            )}
+        {/* Student Information Section */}
+        <Card 
+          variant="outlined" 
+          sx={{ 
+            mb: 3, 
+            borderRadius: "12px",
+            backgroundColor: isDataRetrieved ? "rgba(232, 245, 253, 0.5)" : "inherit",
+            transition: "all 0.3s ease"
+          }}
+        >
+          <CardContent>
+            <SectionTitle variant="h6">
+              <PersonIcon color="primary" /> Student Information
+            </SectionTitle>
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <FieldLabel>Full Name</FieldLabel>
+                <TextField 
+                  fullWidth 
+                  placeholder="Student name will appear here"
+                  value={formData.name} 
+                  InputProps={{ readOnly: true }} 
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={3}>
+                <FieldLabel>Branch</FieldLabel>
+                <TextField 
+                  fullWidth 
+                  placeholder="Branch"
+                  value={formData.branch} 
+                  InputProps={{ readOnly: true }} 
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={3}>
+                <FieldLabel>Section</FieldLabel>
+                <TextField 
+                  fullWidth 
+                  placeholder="Section"
+                  value={formData.section} 
+                  InputProps={{ readOnly: true }} 
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+            </Grid>
+            
+            <Divider sx={{ my: 2, opacity: 0.6 }} />
+            
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={4}>
+                <FieldLabel>Academic Year</FieldLabel>
+                <TextField 
+                  fullWidth 
+                  placeholder="Year"
+                  value={formData.year} 
+                  InputProps={{ readOnly: true }} 
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={4}>
+                <FieldLabel>Gender</FieldLabel>
+                <TextField 
+                  fullWidth 
+                  placeholder="Gender"
+                  value={formData.gender} 
+                  InputProps={{ readOnly: true }} 
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+              
+              <Grid item xs={12} md={4}>
+                <FieldLabel>Contact Number</FieldLabel>
+                <TextField 
+                  fullWidth 
+                  placeholder="Phone number"
+                  value={formData.phone_number} 
+                  InputProps={{ 
+                    readOnly: true,
+                    startAdornment: formData.phone_number && (
+                      <InputAdornment position="start">
+                        <PhoneIcon fontSize="small" color="action" />
+                      </InputAdornment>
+                    ),
+                  }} 
+                  variant="outlined"
+                  size="small"
+                />
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
 
-            <Box sx={{ mt: 4, mb: 2, textAlign: "center" }}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                sx={{ 
-                  minWidth: "200px", 
-                  borderRadius: "8px", 
-                  padding: "12px 24px",
-                  fontSize: "1.1rem"
-                }}
-              >
-                Start Recording
-              </Button>
-            </Box>
-          </form>
-        </Paper>
-      </Container>
-    </Box>
+        {/* Error message area */}
+        {errorMessage && (
+          <Alert severity="error" sx={{ mb: 3, borderRadius: "8px" }}>
+            {errorMessage}
+          </Alert>
+        )}
+
+        {/* Submit button area */}
+        <Box textAlign="center" mt={4}>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            disabled={!isDataRetrieved}
+            startIcon={<VideocamIcon />}
+            sx={{ 
+              minWidth: "250px", 
+              borderRadius: "30px", 
+              padding: "12px 24px",
+              boxShadow: "0 4px 12px rgba(33, 150, 243, 0.3)",
+              background: "linear-gradient(45deg, #3f51b5, #2196f3)",
+              "&:hover": {
+                background: "linear-gradient(45deg, #303f9f, #1e88e5)",
+                boxShadow: "0 6px 14px rgba(33, 150, 243, 0.4)",
+              }
+            }}
+          >
+            Start Recording
+          </Button>
+        </Box>
+      </form>
+    </StyledFormCard>
   );
 };
 

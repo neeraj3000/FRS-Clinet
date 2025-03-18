@@ -102,7 +102,7 @@ function App() {
              <Route path="todayclasses/:year/facultyauth/:Id" element={<Facultyauth />} />
              <Route path="todayclasses/:year/facultyauth/:Id/facultyotp" element={<Facultyotp />} />
             <Route path="todayclasses/:year/facultyauth/:Id/facultyotp/markattendance/:id" element={<MarkAttendance />} />
-            <Route path="todayclasses/:year/markattendance/:id" element={<MarkAttendance />} />
+            <Route path="todayclasses/:year/markattendance/:id/:faculty_name" element={<MarkAttendance />} />
              <Route path="profile" element={<Profile />} />
              <Route path="timetable" element={<FacultyTimeTableTabs />} />
              <Route path="studentvisualisation/:studentId" element={<FacultyStudentAttendanceOverview />} />

@@ -55,10 +55,9 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Routes>
-        login_and_student_Dashboard
+          login_and_student_Dashboard
           {/* Login Route */}
           <Route path="/addstudent" element={<AddStudent />} />
-
           <Route path="/" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpFrom />} />
           <Route path="/forgot" element={<Forgot />} />
@@ -73,10 +72,9 @@ function App() {
 
           </Route>
           {/* Admin Routes */}
-        
           <Route path="/admin" element={<Admin />}>
             {/* Nested admin routes */}
-            <Route index element={<Navigate to="/admin/dashboard" />} /> 
+            <Route index element={<Navigate to="/admin/dashboard" />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="todayclasses/" element={<ManageClasses />} />
             <Route path="todayclasses/:year" element={<ManageClasses />} />
@@ -104,7 +102,7 @@ function App() {
              <Route path="todayclasses/:year/facultyauth/:Id" element={<Facultyauth />} />
              <Route path="todayclasses/:year/facultyauth/:Id/facultyotp" element={<Facultyotp />} />
             <Route path="todayclasses/:year/facultyauth/:Id/facultyotp/markattendance/:id" element={<MarkAttendance />} />
-            <Route path="todayclasses/:year/markattendance/:id" element={<MarkAttendance />} />
+            <Route path="todayclasses/:year/markattendance/:id/:faculty_name" element={<MarkAttendance />} />
              <Route path="profile" element={<Profile />} />
              <Route path="timetable" element={<FacultyTimeTableTabs />} />
              <Route path="studentvisualisation/:studentId" element={<FacultyStudentAttendanceOverview />} />

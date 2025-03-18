@@ -116,6 +116,7 @@ const ClassCards = ({ year, date }) => {
   const [classes, setClasses] = useState([]); // Initialize as an empty array
   const [loading, setLoading] = useState(true); // State for loading
   const [error, setError] = useState(null); // State for error handling
+  const [facultyName, setFacultyName] = useState(''); // State for faculty name
 
   // Period-to-time mapping
   const periodTimeMapping = {
@@ -151,9 +152,12 @@ const ClassCards = ({ year, date }) => {
         }
 
         const data = await response.json();
-        console.log("Fetched Data:", data);
+        console.log(data.attendance[0].year)
+        console.log("Fetched Data:", data.attendance);
 
         // Validate and transform the data
+        console.log("Data:", data);
+        setFacultyName(data.faculty_email);
         if (data && Array.isArray(data.schedule)) {
           const transformedData = data.schedule.map((classItem) => {
             // Get the first period from the periods array
@@ -162,6 +166,7 @@ const ClassCards = ({ year, date }) => {
 
             return {
               id: classItem.subject + "-" + classItem.section, // Generate a unique ID
+              year: classItem.year || "N/A",
               subject: classItem.subject || "N/A",
               classFor: `Sec: ${classItem.section || "N/A"}`,
               time: timeSlot.start, // Set time based on period
@@ -198,8 +203,8 @@ const ClassCards = ({ year, date }) => {
     return '#ffebee';
   };
 
-  const handleNavigation = (path, classId) => {
-    navigate(`/faculty/todayclasses/${year}${path}/${classId}`);
+  const handleNavigation = (path, classId, year, faculty_name) => {
+    navigate(`/faculty/todayclasses/${year}${path}/${classId}/${faculty_name}`);
   };
 
   const handleDialogOpen = (classItem) => {
@@ -231,6 +236,7 @@ const ClassCards = ({ year, date }) => {
   return (
     <Box>
       <Grid container spacing={2} sx={{ padding: '16px' }}>
+        {console.log("Classes:", classes)}
         {classes.map((classItem) => {
           const attendancePercent = getAttendancePercentage(classItem.presents, classItem.absents);
 
@@ -268,7 +274,7 @@ const ClassCards = ({ year, date }) => {
                         fontWeight: 'bold'
                       }}
                     >
-                      {`${year.toUpperCase()}, SEC: ${classItem.classFor.split(': ')[1].toUpperCase()}`} {/* Year and Section in uppercase */}
+                      {`${classItem.year.toUpperCase()}, SEC: ${classItem.classFor.split(': ')[1].toUpperCase()}`} {/* Year and Section in uppercase */}
                     </Typography>
 
 
@@ -322,7 +328,10 @@ const ClassCards = ({ year, date }) => {
                       color="primary" 
                       size="small"
                       sx={{ textTransform: 'none' }}
-                      onClick={() => handleNavigation('/markattendance', classItem.id)}
+                      onClick={() => {
+                        console.log("Mark Attendance for:", classItem);
+                        handleNavigation('/markattendance', classItem.id, classItem.year.toUpperCase(), facultyName)
+                      }}
                     >
                       Mark Attendance
                     </Button>

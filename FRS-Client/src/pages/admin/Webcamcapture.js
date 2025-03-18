@@ -142,7 +142,7 @@ const WebcamCapture = () => {
   const navigate = useNavigate();
   const formData = location.state;
   
-  const TOTAL_FRAMES = 30; // Total number of frames to capture
+  const TOTAL_FRAMES = 15; // Total number of frames to capture
 
   // Function to capture a single frame
   const captureFrame = () => {
@@ -166,19 +166,19 @@ const WebcamCapture = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({"id_number":formData.formData.id_number, "images": images }),
       });
-    //   console.log(images)
-      console.log(formData.formData.id_number)
+      // console.log(formData.formData.id_number)
 
       const data = await response.json();
-
-      if (data.status === "success") {
+      console.log(data)
+      console.log(data.status)
+      if (data.status == 200) {
         setProcessStatus("success");
         setStatusMessage("Verification successful!");
         setIsRedirecting(true);
 
         // Redirect after 3 seconds
         setTimeout(() => {
-          navigate("/student");
+          navigate("/admin/registerstudents");
         }, 3000);
       } else {
         setProcessStatus("error");
@@ -216,9 +216,10 @@ const WebcamCapture = () => {
         } else {
           clearInterval(intervalId);
           setIsCapturing(false);
+          console.log(capturedImages);
           sendImagesBatch(capturedImages); // Send all captured images
         }
-      }, 100); // Capture every 200ms (5 frames per second)
+      }, 500); // Capture every 200ms (5 frames per second)
     }
 
     return () => clearInterval(intervalId);

@@ -142,7 +142,7 @@ const WebcamCapture = () => {
   const navigate = useNavigate();
   const formData = location.state;
   
-  const TOTAL_FRAMES = 15; // Total number of frames to capture
+  const TOTAL_FRAMES = 30; // Total number of frames to capture
 
   // Function to capture a single frame
   const captureFrame = () => {
@@ -175,11 +175,11 @@ const WebcamCapture = () => {
         setProcessStatus("success");
         setStatusMessage("Verification successful!");
         setIsRedirecting(true);
-
+        stopCamera();
         // Redirect after 3 seconds
         setTimeout(() => {
-          navigate("/admin/registerstudents");
-        }, 3000);
+          navigate("/admin/registerstudents", {replace:true});
+        }, 2000);
       } else {
         setProcessStatus("error");
         setStatusMessage(data.message || "Verification failed. Please try again.");
@@ -190,6 +190,16 @@ const WebcamCapture = () => {
       setStatusMessage("Error connecting to the server. Please try again later.");
     }
   };
+
+  const stopCamera = () => {
+    const stream = document.querySelector("video")?.srcObject;
+    if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop()); // Stop each track
+        document.querySelector("video").srcObject = null; // Remove stream
+    }
+};
+
 
   // Function to start capturing images
   const startCapture = () => {

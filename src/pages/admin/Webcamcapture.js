@@ -13,7 +13,7 @@ import {
   LinearProgress
 } from "@mui/material";
 import { styled } from "@mui/system";
-import { useParams,useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -171,7 +171,7 @@ const WebcamCapture = () => {
       const data = await response.json();
       console.log(data)
       console.log(data.status)
-      if (data.status == 200) {
+      if (data.status === 200) {
         setProcessStatus("success");
         setStatusMessage("Verification successful!");
         setIsRedirecting(true);

@@ -381,7 +381,7 @@ const MarkAttendance = () => {
         const data = JSON.parse(event.data);
         if (data.students) {
           latestFaces = data.students;
-          setDetectedFaces(data.students);
+          setDetectedFaces(prevFaces => [...prevFaces, ...data.students]);
           setFrameCount((prev) => prev + 1);
           isReadyToSend = true;
         }

@@ -27,6 +27,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PersonIcon from "@mui/icons-material/Person";
+import axios from "axios";
+import { useEffect } from "react";
 
 const PRIMARY_COLOR = "#1976D2";
 const drawerWidthDefault = 240;
@@ -136,12 +138,41 @@ export default function MiniDrawer({
   const navigate = useNavigate();
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [adminInfo, setAdminInfo] = React.useState(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
   const [profileMenuAnchorEl, setProfileMenuAnchorEl] = React.useState(null);
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
   const isProfileMenuOpen = Boolean(profileMenuAnchorEl);
+  useEffect(() => {
+      const fetchProfile = async () => {
+        try {
+          const authtoken = localStorage.getItem('token');
+          const response = await axios.get("http://127.0.0.1:8000/profile", {
+            headers: {
+              'Content-Type': 'application/json',
+              "Authorization": `Bearer ${authtoken}`,
+            },
+          });
+          
+          const data = response.data;
+          setAdminInfo({
+            name: `${data.first_name} ${data.middle_name} ${data.last_name}`,
+            email: data.email_address,
+            phone: data.phone_number,
+            department: data.department,
+            position: data.designation,
+            education: data.qualification,
+            isAdmin: data.is_admin,
+          });
+        } catch (error) {
+          console.error("Error fetching profile data:", error);
+        }
+      };
+  
+      fetchProfile();
+    }, []);
 
   const handleProfileMenuOpen = (event) => {
     setProfileMenuAnchorEl(event.currentTarget);
@@ -245,7 +276,7 @@ export default function MiniDrawer({
         <Divider sx={{ borderColor: "rgba(0, 0, 0, 0.08)" }} />
 
         <List>
-          {drawerItems.map((text, index) => (
+          {drawerItems.map(({ text, icon }, index) => (
             <ListItem key={text} disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 component={Link}
@@ -276,7 +307,7 @@ export default function MiniDrawer({
                     color: PRIMARY_COLOR,
                   }}
                 >
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                  {icon}
                 </ListItemIcon>
                 <ListItemText
                   primary={text}
@@ -337,16 +368,16 @@ export default function MiniDrawer({
         {/* Updated Profile Section */}
         <ProfileSection open={open}>
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: PRIMARY_COLOR }}>
-              U
+            <Avatar sx={{ display: "flex", alignItems: "center", justifyContent: "center",  bgcolor: PRIMARY_COLOR }}>
+              {adminInfo ? adminInfo.name.charAt(0).toUpperCase() : "U"}
             </Avatar>
             {open && (
               <Box sx={{ overflow: "hidden" }}>
                 <Typography variant="subtitle2" noWrap sx={{ fontWeight: 600 }}>
-                  User Name
+                  {adminInfo.name && adminInfo.name!="undefined undefined undefined" ? adminInfo.name : "User Name"}
                 </Typography>
                 <Typography variant="caption" noWrap sx={{ color: "#666666" }}>
-                  user@example.com
+                  {adminInfo.email ? adminInfo.email : "user@gmail.com"}
                 </Typography>
               </Box>
             )}

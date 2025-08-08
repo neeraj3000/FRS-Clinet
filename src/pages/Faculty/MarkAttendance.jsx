@@ -316,48 +316,56 @@ const MarkAttendance = () => {
   };
 
   const drawFaceBoxes = (faces) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  const canvas = canvasRef.current;
+  if (!canvas) return;
+
+  const context = canvas.getContext("2d");
+  const video = videoRef.current;
+  if (!video || video.videoWidth === 0) return;
+
+  // Match canvas size to video
+  if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+  }
+
+  // Draw the current video frame as background
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Scale helpers
+  const scale = Math.min(canvas.width, canvas.height) / 500;
+  const lineWidth = Math.max(1, Math.floor(2 * scale));
+  const fontSize  = Math.max(10, Math.floor(16 * scale));
+
+  context.font = `${fontSize}px Arial`;
   
-    const context = canvas.getContext("2d");
-    const video = videoRef.current;
-  
-    if (!video || video.videoWidth === 0) return;
-  
-    if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-    }
-  
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-  
-    // Adjust box and text size based on canvas dimensions
-    const scale = Math.min(canvas.width, canvas.height) / 500; // normalize for different screen sizes
-    const lineWidth = Math.max(1, Math.floor(2 * scale));
-    const fontSize = Math.max(10, Math.floor(16 * scale));
-    
-    context.lineWidth = lineWidth;
-    context.strokeStyle = "rgba(0, 255, 0, 0.8)";
-    context.font = `${fontSize}px Arial`;
-    context.fillStyle = "rgba(0, 255, 0, 0.2)";
-  
-    faces.forEach(({ x, y, w, h, name }) => {
-      context.fillRect(x, y, w, h);
-      context.strokeRect(x, y, w, h);
-  
-      const text = name || "Unknown";
-      const textWidth = context.measureText(text).width;
-  
-      context.fillStyle = "rgba(0, 0, 0, 0.6)";
-      context.fillRect(x, y - fontSize - 8, textWidth + 10, fontSize + 4);
-  
-      context.fillStyle = "white";
-      context.fillText(text, x + 5, y - 6);
-  
-      context.fillStyle = "rgba(0, 255, 0, 0.2)";
-    });
-  };
+  faces.forEach(({ x, y, w, h, name }) => {
+    const isUnknown = name === "Unknown";
+
+    // choose styles
+    context.lineWidth   = lineWidth;
+    context.strokeStyle = isUnknown ? "rgba(255, 0, 0, 0.8)"  // red
+                                     : "rgba(0, 255, 0, 0.8)"; // green
+    context.fillStyle   = isUnknown ? "rgba(255, 0, 0, 0.2)"
+                                     : "rgba(0, 255, 0, 0.2)";
+
+    // draw box
+    context.fillRect(x, y, w, h);
+    context.strokeRect(x, y, w, h);
+
+    // draw label background
+    const label = name || "Unknown";
+    const textWidth = context.measureText(label).width;
+    context.fillStyle = "rgba(0, 0, 0, 0.6)";
+    context.fillRect(x, y - fontSize - 6, textWidth + 10, fontSize + 4);
+
+    // draw label text
+    context.fillStyle = "white";
+    context.fillText(label, x + 5, y - 6);
+  });
+};
+
   
   const handleStartCapture = () => {
     startCamera();
@@ -463,9 +471,10 @@ const MarkAttendance = () => {
     // Process the attendance data
     const detectedStudentIdentifiers = new Set(
       detectedFaces
-        .filter((face) => (face.name && face.name !== "Unknown") || face.id_number)
-        .flatMap((face) => [face.name, face.id_number].filter(Boolean))
+        .flatMap(face => [face.name, face.id_number])
+        .filter(val => val && val !== "Unknown")
     );
+
 
     // Find matching students from allStudents
     const presentStudentsList = allStudents.filter(

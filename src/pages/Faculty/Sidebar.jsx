@@ -18,7 +18,7 @@ import {
 } from '@mui/icons-material';
 
 const Sidebar = ({ mobileOpen, handleDrawerToggle, isMobile }) => {
-  const drawerWidth = 240;
+  const drawerWidth = 340;
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -65,7 +65,7 @@ const Sidebar = ({ mobileOpen, handleDrawerToggle, isMobile }) => {
   ];
 
   const drawer = (
-    <Box sx={{ bgcolor: 'background.paper', height: '100%' }}>
+    <Box sx={{ bgcolor: 'background.paper', height: '100%', width: drawerWidth }}>
       <List>
         {menuItems.map((item) => (
           <ListItem 
